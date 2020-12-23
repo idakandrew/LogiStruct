@@ -23,21 +23,19 @@ float btn_draw(button btn, ALLEGRO_FONT *font, float click) {
         al_draw_filled_rectangle(btn.cx - al_get_bitmap_width(btn.bit) * (1 - click), btn.cy - al_get_bitmap_height(btn.bit) * (1 - click), 
             btn.cx + al_get_bitmap_width(btn.bit) * (1 - click), btn.cy + al_get_bitmap_height(btn.bit) * (1 - click), al_map_rgb(200, 200, 200));
         al_draw_tinted_bitmap(btn.bit, al_map_rgba_f(.8, .8, .8, .8), btn.x, btn.y, 0);
-        click-= .025;
+        click-= .05;
     } 
 
-    al_draw_text(font, al_map_rgb(1, 1, 1), btn.cx, btn.cy - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, btn.text);
+    al_draw_text(font, al_map_rgb(200, 200, 200), btn.cx, btn.cy - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, btn.text);
     
     return click;
 }
 
-float btn_click(button btn, ALLEGRO_MOUSE_EVENT click) {
+void btn_click(button btn, ALLEGRO_MOUSE_EVENT click, float *time) {
     float xrange = btn.x + al_get_bitmap_width(btn.bit);
     float yrange = btn.y + al_get_bitmap_height(btn.bit);
 
     if(click.x >= btn.x && click.x <= xrange && click.y >= btn.y && click.y <= yrange) {
-        return 1;
+        *time = 1;
     }
-    
-    return 0;
 }
