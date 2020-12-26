@@ -13,6 +13,6 @@ typedef struct button {
 
 button btn_build(float cx, float cy, char *text, char *file);
 
-float btn_draw(button btn, ALLEGRO_FONT *font, float click);
+int btn_draw(button btn, ALLEGRO_FONT *font, int click);
 
-void btn_click(button btn, ALLEGRO_MOUSE_EVENT click, float *time);
+void btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time);
