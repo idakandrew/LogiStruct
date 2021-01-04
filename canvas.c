@@ -27,6 +27,8 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
             
             if(map[i][j] == lowire) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(30, 30, 30));
+            } else if(map[i][j] == hiwire || map[i][j] == source) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(136, 30, 30)); 
             } else if(map[i][j] == and || map[i][j] == aboard) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 180, 80));
                 if(map[i][j] == and) {xs[saved] = i, ys[saved] = j, saved++;}
@@ -35,15 +37,17 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
                 if(map[i][j] == not) {xs[saved] = i, ys[saved] = j, saved++;}
             } else if(map[i][j] == pin) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 0, 0));
+            } else if(map[i][j] == flip || map[i][j] == fboard) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(100, 100, 100));
             }
         }
     }
 
     for(int i = 0; i < saved; i++) {
         if(map[xs[i]][ys[i]] == and) {
-            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+10 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "AND");
+            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "AND");
         } else if(map[xs[i]][ys[i]] == not) {
-            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+10 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOT");
+            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOT");
         }
     }
 }
@@ -54,7 +58,7 @@ void place_chip(int x, int y, comp chip, int map[96][50], int mode) {
         y = range(2, y, 47);
         for(int i = x - 3; i < x + 4; i++) {
             for(int j = y - 3; j < y + 4; j++) {
-                if (map[range(0, i, 95)][range(0, j, 49)] != empty && mode) {
+                if (map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
                     goto trip;
                 }
             }
@@ -65,13 +69,13 @@ void place_chip(int x, int y, comp chip, int map[96][50], int mode) {
             }
         }
         map[x][y] = and * mode;
-        map[x - 2][y + 1] = map[x - 2][y - 1] = map[x + 2][y] = pin * mode;
+        map[x - 3][y + 1] = map[x - 3][y - 1] = map[x + 3][y] = pin * mode;
     } else if(chip == not) {
         x = range(2, x, 93);
         y = range(1, y, 48);
         for(int i = x - 3; i < x + 4; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] != empty && mode) {
+                if(map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
                     goto trip;
                 }
             }
@@ -82,7 +86,23 @@ void place_chip(int x, int y, comp chip, int map[96][50], int mode) {
             }
         }
         map[x][y] = not * mode;
-        map[x - 2][y] = map[x + 2][y] = pin * mode;
+        map[x - 3][y] = map[x + 3][y] = pin * mode;
+    } else if(chip == flip) {
+        x = range(2, x, 93);
+        y = range(2, y, 47);
+        for(int i = x - 2; i < x + 3; i++) {
+            for(int j = y - 2; j < y + 3; j++) {
+                if(map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
+                    goto trip;
+                }
+            }
+        }
+        for(int i = x - 1; i < x + 2; i++) {
+            for(int j = y - 1; j < y + 2; j++) {
+                map[i][j] = fboard * mode;
+            }
+        }
+        map[x][y] = flip * mode;
     }
     trip:
         return;

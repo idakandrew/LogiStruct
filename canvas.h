@@ -3,7 +3,7 @@
 
 #include <allegro5/allegro_font.h>
 
-typedef enum component {empty, lowire, hiwire, pin, aboard, nboard, and, not} comp;
+typedef enum component {empty, lowire, hiwire, source, pin, fboard, aboard, nboard, flip, and, not} comp;
 
 int range(int min, int val, int max);
 
