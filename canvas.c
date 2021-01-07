@@ -27,7 +27,7 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
             
             if(map[i][j] == lowire) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(30, 30, 30));
-            } else if(map[i][j] == hiwire || map[i][j] == source) {
+            } else if(map[i][j] == hiwire) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(136, 30, 30)); 
             } else if(map[i][j] == and || map[i][j] == aboard) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 180, 80));
@@ -35,10 +35,14 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
             } else if(map[i][j] == not || map[i][j] == nboard) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 80, 180));
                 if(map[i][j] == not) {xs[saved] = i, ys[saved] = j, saved++;}
-            } else if(map[i][j] == pin) {
+            } else if(map[i][j] == lopinin || map[i][j] == lopinout) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 0, 0));
-            } else if(map[i][j] == flip || map[i][j] == fboard) {
+            } else if(map[i][j] == loflip || map[i][j] == hiflip) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(60, 60, 60));
+            } else if(map[i][j] == lolight) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(100, 100, 100));
+            } else if(map[i][j] == hilight || map[i][j] == hipinin || map[i][j] == hipinout) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(200, 200, 200));
             }
         }
     }
@@ -52,60 +56,108 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
     }
 }
 
-void place_chip(int x, int y, comp chip, int map[96][50], int mode) {
+void place_chip(int x, int y, comp chip, int map[96][50]) {
     if(chip == and) {
         x = range(2, x, 93);
         y = range(2, y, 47);
-        for(int i = x - 3; i < x + 4; i++) {
+        for(int i = x - 4; i < x + 5; i++) {
             for(int j = y - 3; j < y + 4; j++) {
-                if (map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
+                if (map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
         }
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                map[i][j] = aboard * mode;
+                map[i][j] = aboard;
             }
         }
-        map[x][y] = and * mode;
-        map[x - 3][y + 1] = map[x - 3][y - 1] = map[x + 3][y] = pin * mode;
+        map[x][y] = and;
+        map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
+        map[x + 3][y] = lopinout;
     } else if(chip == not) {
         x = range(2, x, 93);
         y = range(1, y, 48);
-        for(int i = x - 3; i < x + 4; i++) {
+        for(int i = x - 4; i < x + 5; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
+                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
         }
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 1; j < y + 2; j++) {
-                map[i][j] = nboard * mode;
+                map[i][j] = nboard;
             }
         }
-        map[x][y] = not * mode;
-        map[x - 3][y] = map[x + 3][y] = pin * mode;
-    } else if(chip == flip) {
+        map[x][y] = not;
+        map[x - 3][y] = lopinin;
+        map[x + 3][y] = lopinout;
+    } else if(chip == loflip) {
         x = range(2, x, 93);
         y = range(2, y, 47);
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] > pin && mode) {
+                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
         }
         for(int i = x - 1; i < x + 2; i++) {
             for(int j = y - 1; j < y + 2; j++) {
-                map[i][j] = fboard * mode;
+                map[i][j] = loflip;
             }
         }
-        map[x][y] = flip * mode;
+    } else if(chip == lolight) {
+        x = range(2, x, 93);
+        y = range(2, y, 47);
+        for(int i = x - 2; i < x + 3; i++) {
+            for(int j = y - 2; j < y + 3; j++) {
+                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
+                    goto trip;
+                }
+            }
+        }
+        for(int i = x - 1; i < x + 2; i++) {
+            for(int j = y - 1; j < y + 2; j++) {
+                map[i][j] = lolight;
+            }
+        }
     }
     trip:
         return;
+}
+
+void remove_chip(int map[96][50], int x, int y) {
+    if(map[x][y] > hipinout) {
+        map[x][y] = empty;
+        remove_chip(map, x+1, y);
+        remove_chip(map, x-1, y);
+        remove_chip(map, x, y+1);
+        remove_chip(map, x, y-1);
+    } else if(map[x][y] > hiwire && map[x][y] < aboard) {
+        map[x][y] = empty;
+    }
+}
+
+int flip_switch(int map[96][50], int x, int y, int mode) {
+    if(map[x][y] == loflip && (mode == 0 || mode == 1)) {
+        map[x][y] = hiflip;
+        flip_switch(map, x+1, y, 1);
+        flip_switch(map, x-1, y, 1);
+        flip_switch(map, x, y+1, 1);
+        flip_switch(map, x, y-1, 1);
+    } else if(map[x][y] == hiflip && (mode == 0 || mode == 2)) {
+        map[x][y] = loflip;
+        flip_switch(map, x+1, y, 2);
+        flip_switch(map, x-1, y, 2);
+        flip_switch(map, x, y+1, 2);
+        flip_switch(map, x, y-1, 2);
+    }
+    if(!mode) {
+        return 10;
+    }
+    return 0;
 }
 
 void lock_coords(int *lock, int *lx, int *ly, ALLEGRO_MOUSE_STATE state) {
