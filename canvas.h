@@ -3,9 +3,12 @@
 
 #include <allegro5/allegro_font.h>
 
-typedef enum component {empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, and, not, lolight, hilight, loflip, hiflip} comp;
+typedef enum component {empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, 
+    and, not, lolight, hilight, loflip, hiflip, cross} comp;
 
-int range(int min, int val, int max);
+bool m_range(ALLEGRO_MOUSE_STATE mouse, int xmin, int xmax, int ymin, int ymax);
+
+int r_lim(int min, int val, int max);
 
 void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font);
 

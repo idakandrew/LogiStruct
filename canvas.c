@@ -5,7 +5,14 @@
 #include <allegro5/allegro_ttf.h>
 #include "canvas.h"
 
-int range(int min, int val, int max) {
+bool m_range(ALLEGRO_MOUSE_STATE mouse, int xmin, int xmax, int ymin, int ymax) {
+    if(mouse.x >= xmin && mouse.x <= xmax && mouse.y >= ymin && mouse.y <= ymax) {
+        return true;
+    }
+    return false;
+}
+
+int r_lim(int min, int val, int max) {
     if (val < min) {return min;}
     else if (val > max) {return max;}
     else {return val;}
@@ -28,20 +35,22 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
             if(map[i][j] == lowire) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(30, 30, 30));
             } else if(map[i][j] == hiwire) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(136, 30, 30)); 
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(200, 30, 30)); 
             } else if(map[i][j] == and || map[i][j] == aboard) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 180, 80));
                 if(map[i][j] == and) {xs[saved] = i, ys[saved] = j, saved++;}
             } else if(map[i][j] == not || map[i][j] == nboard) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 80, 180));
                 if(map[i][j] == not) {xs[saved] = i, ys[saved] = j, saved++;}
-            } else if(map[i][j] == lopinin || map[i][j] == lopinout) {
+            } else if(map[i][j] == cross) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(150, 150, 0));
+            } else if(map[i][j] == lopinin || map[i][j] == lopinout || map[i][j] == loflip) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 0, 0));
-            } else if(map[i][j] == loflip || map[i][j] == hiflip) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(60, 60, 60));
+            } else if (map[i][j] == hipinin || map[i][j] == hipinout || map[i][j] == hiflip) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(80, 0, 0));
             } else if(map[i][j] == lolight) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(100, 100, 100));
-            } else if(map[i][j] == hilight || map[i][j] == hipinin || map[i][j] == hipinout) {
+            } else if(map[i][j] == hilight) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(200, 200, 200));
             }
         }
@@ -58,11 +67,11 @@ void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
 
 void place_chip(int x, int y, comp chip, int map[96][50]) {
     if(chip == and) {
-        x = range(2, x, 93);
-        y = range(2, y, 47);
+        x = r_lim(3, x, 92);
+        y = r_lim(2, y, 47);
         for(int i = x - 4; i < x + 5; i++) {
             for(int j = y - 3; j < y + 4; j++) {
-                if (map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
+                if (map[r_lim(0, i, 95)][r_lim(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
@@ -76,11 +85,11 @@ void place_chip(int x, int y, comp chip, int map[96][50]) {
         map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
         map[x + 3][y] = lopinout;
     } else if(chip == not) {
-        x = range(2, x, 93);
-        y = range(1, y, 48);
+        x = r_lim(3, x, 92);
+        y = r_lim(1, y, 48);
         for(int i = x - 4; i < x + 5; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
+                if(map[r_lim(0, i, 95)][r_lim(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
@@ -94,11 +103,11 @@ void place_chip(int x, int y, comp chip, int map[96][50]) {
         map[x - 3][y] = lopinin;
         map[x + 3][y] = lopinout;
     } else if(chip == loflip) {
-        x = range(2, x, 93);
-        y = range(2, y, 47);
+        x = r_lim(1, x, 94);
+        y = r_lim(1, y, 48);
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
+                if(map[r_lim(0, i, 95)][r_lim(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
@@ -109,11 +118,11 @@ void place_chip(int x, int y, comp chip, int map[96][50]) {
             }
         }
     } else if(chip == lolight) {
-        x = range(2, x, 93);
-        y = range(2, y, 47);
+        x = r_lim(1, x, 94);
+        y = r_lim(1, y, 48);
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 2; j < y + 3; j++) {
-                if(map[range(0, i, 95)][range(0, j, 49)] > hiwire) {
+                if(map[r_lim(0, i, 95)][r_lim(0, j, 49)] > hiwire) {
                     goto trip;
                 }
             }
@@ -123,6 +132,17 @@ void place_chip(int x, int y, comp chip, int map[96][50]) {
                 map[i][j] = lolight;
             }
         }
+    } else if(chip == cross) {
+        x = r_lim(2, x, 93);
+        y = r_lim(2, y, 47);
+        for(int i = x - 1; i < x + 2; i++) {
+            for(int j = y - 1; j < y + 2; j++) {
+                if(map[r_lim(0, i, 95)][r_lim(0, j, 49)] > hiwire) {
+                    goto trip;
+                }
+            }
+        }
+        map[x][y] = cross;
     }
     trip:
         return;

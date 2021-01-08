@@ -49,9 +49,34 @@ void wire_sim(int map[96][50], int x, int y, int mode) {
         if(map[x][y] == lowire) {map[x][y] = hiwire;}
         else if(map[x][y] == lolight) {map[x][y] = hilight;}
         else if(map[x][y] == lopinin) {map[x][y] = hipinin;}
-        if(map[x+1][y] == lowire || map[x+1][y] == lolight || map[x+1][y] == lopinin) {wire_sim(map, x+1, y, 1);}
-        if(map[x-1][y] == lowire || map[x-1][y] == lolight || map[x-1][y] == lopinin) {wire_sim(map, x-1, y, 1);}
-        if(map[x][y+1] == lowire || map[x][y+1] == lolight || map[x][y+1] == lopinin) {wire_sim(map, x, y+1, 1);}
-        if(map[x][y-1] == lowire || map[x][y-1] == lolight || map[x][y-1] == lopinin) {wire_sim(map, x, y-1, 1);}
+
+        if(map[x+1][y] == lowire || map[x+1][y] == lolight || map[x+1][y] == lopinin || map[x+1][y] == cross) {
+            if (map[x+1][y] == cross && map[x+2][y] == lowire) {
+                wire_sim(map, x+2, y, 1);
+            } else if(map[x+1][y] != cross) {
+                wire_sim(map, x+1, y, 1);
+            }
+        }
+        if(map[x-1][y] == lowire || map[x-1][y] == lolight || map[x-1][y] == lopinin || map[x-1][y] == cross) {
+            if (map[x-1][y] == cross && map[x-2][y] == lowire) {
+                wire_sim(map, x-2, y, 1);
+            } else if(map[x-1][y] != cross) {
+                wire_sim(map, x-1, y, 1);
+            }
+        }
+        if(map[x][y+1] == lowire || map[x][y+1] == lolight || map[x][y+1] == lopinin || map[x][y+1] == cross) {
+            if (map[x][y+1] == cross && map[x][y+2] == lowire) {
+                wire_sim(map, x, y+2, 1);
+            } else if(map[x][y+1] != cross) {
+                wire_sim(map, x, y+1, 1);
+            }
+        }
+        if(map[x][y-1] == lowire || map[x][y-1] == lolight || map[x][y-1] == lopinin || map[x][y-1] == cross) {
+            if (map[x][y-1] == cross && map[x][y-2] == lowire) {
+                wire_sim(map, x, y-2, 1);
+            } else if(map[x][y-1] != cross) {
+                wire_sim(map, x, y-1, 1);
+            }
+        }
     }
 }
