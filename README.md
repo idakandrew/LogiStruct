@@ -1,4 +1,4 @@
-![logo](https://github.com/idakandrew/logistruct/data/logo.png?raw=true)
+![logo](https://github.com/idakandrew/logistruct/blob/main/data/logo.png?raw=true)
 
 ## Description
 Repository for the in-development circuit/logic gate simulator LogiStruct, built in C with Allegro 5.
