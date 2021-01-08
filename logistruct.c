@@ -78,7 +78,7 @@ int main(void) {
                 al_clear_to_color(al_map_rgb(45, 45, 45));
                 al_draw_filled_rectangle(130, 0, 830, 1080, al_map_rgb(15, 15, 15));
                 al_draw_bitmap(logo, 480 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, al_map_rgb(200, 200, 200), 480, 1000, ALLEGRO_ALIGN_CENTER, "Version 0.1");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 480, 1000, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
                 btn_draw(mbtn0, font, &mcbtn0);
                 btn_draw(mbtn1, font, &mcbtn1);
                 btn_draw(mbtn2, font, &mcbtn2);
