@@ -1,7 +1,5 @@
 #include <math.h>
-#include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include "canvas.h"
 
@@ -18,12 +16,12 @@ int r_lim(int min, int val, int max) {
     else {return val;}
 } 
 
-void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
+void draw_map(bool menu, bool grid, int map[96][50], ALLEGRO_FONT *font) {
     int xs[192];
     int ys[192];
     int saved = 0;
 
-    al_draw_filled_rectangle(0, 1000, 1920, 1080, al_map_rgb(15, 15, 15));
+    if(!menu) {al_draw_filled_rectangle(0, 1000, 1920, 1080, al_map_rgb(15, 15, 15));}
 
     for(int i = 0; i < 96; i++) {
         for(int j = 0; j < 50; j++) {
@@ -198,4 +196,16 @@ void lock_handler(int *lock, int lx, int ly, int *x, int *y, int *dirx, int *dir
     } else if(*diry == 1) {
         *x = lx;
     }
+}
+
+void click_handler(int map[96][50], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait) {
+    if(*wait == 0 && select == 0 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
+    else if(map[x][y] > hipinout && state.buttons & 2) {remove_chip(map, x, y);}
+    else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, and, map);}
+    else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, not, map);}
+    else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map);}
+    else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map);}
+    else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map);}
+    else if(state.buttons & 2 && map[x][y] < lopinin) {map[x][y] = empty;}
+    else if(state.buttons & 1 && map[x][y] == empty) {map[x][y] = lowire;}
 }
