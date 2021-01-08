@@ -6,3 +6,6 @@ Compilation will (for the time being, while library file packaging is sorted out
 Currently linked library modules: 
 
 -lallegro -lallegro_image -lallegro_font -lallegro_ttf -lallegro_primitives -lm
+
+
+![test](https://github.com/idakandrew/logistruct/blob/main/logo.png?raw=true)
