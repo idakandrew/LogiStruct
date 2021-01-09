@@ -1,7 +1,7 @@
 ![logo](https://github.com/idakandrew/logistruct/blob/main/data/logo.png?raw=true)
 
-## Description
-Repository for the in-development circuit/logic gate simulator LogiStruct, built in C with Allegro 5.
+## Overview
+LogiStruct is an in-development logic simulator designed around a pixel canvas system. It is written entirely in C, and relies on the Allegro 5 library for graphics and input. 
 ## Version
 Latest: v0.1
 ## Compilation
