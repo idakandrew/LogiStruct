@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <math.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
@@ -29,10 +28,12 @@ int main(void) {
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     ALLEGRO_EVENT event;
-    ALLEGRO_MOUSE_STATE state;
+    ALLEGRO_MOUSE_STATE mstate;
     ALLEGRO_KEYBOARD_STATE kstate;
 
-    int scene = 1;
+    typedef enum scenes {exit, menu, settings, canvas} scene;
+
+    scene curr = menu;
     bool done = false;
     bool redraw = true;
 
@@ -40,14 +41,15 @@ int main(void) {
 
     start:
 
-    if(scene == 1) {
+    if(curr == menu) {
         int mcbtn0 = 0, mcbtn1 = 0, mcbtn2 = 0;
 
-        ALLEGRO_FONT *font = al_load_ttf_font("mont.otf", 32, 0);
-        button mbtn0 = btn_build(480, 500, "Load Project", "new.png");
-        button mbtn1 = btn_build(480, 650, "Controls", "new.png");
-        button mbtn2 = btn_build(480, 800, "Exit", "new.png");
-        ALLEGRO_BITMAP *logo = al_load_bitmap("logo.png");
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
+        button mbtn0 = btn_build(960, 500, "Canvas", "data/new.png");
+        button mbtn1 = btn_build(960, 650, "Controls", "data/new.png");
+        button mbtn2 = btn_build(960, 800, "Exit", "data/new.png");
+        ALLEGRO_BITMAP *logo = al_load_bitmap("data/logo.png");
+        ALLEGRO_BITMAP *bg = al_load_bitmap("data/bg.png");
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -67,19 +69,23 @@ int main(void) {
             }
 
             if(mcbtn0 == 1) {
-                scene = 2;
+                curr = canvas;
+                break;
+            } else if(mcbtn1 == 1) {
+                curr = settings;
                 break;
             } else if(done || mcbtn2 == 1) {
-                scene = 0;
+                curr = exit;
                 break;
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(al_map_rgb(45, 45, 45));
-                al_draw_filled_rectangle(130, 0, 830, 1080, al_map_rgb(15, 15, 15));
-                al_draw_bitmap(logo, 480 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, al_map_rgb(200, 200, 200), 480, 960, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 480, 1000, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
+                al_draw_bitmap(bg, 0, 0, 0);
+                al_draw_filled_rectangle(590, 0, 1330, 1080, al_map_rgb(15, 15, 15));
+                al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
+                al_draw_text(font, al_map_rgb(200, 200, 200), 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 btn_draw(mbtn0, font, &mcbtn0);
                 btn_draw(mbtn1, font, &mcbtn1);
                 btn_draw(mbtn2, font, &mcbtn2);
@@ -97,35 +103,100 @@ int main(void) {
 
         goto start;
 
-    } else if (scene == 2) {
+    } else if(curr == settings) {
+        int scbtn0 = 0, ignore = 0;
+
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
+        button sbtn0 = btn_build(250, 70, "Menu", "data/new.png");
+        button sbtn1 = btn_build(250, 330, "Mouse 1", "data/new.png");
+        button sbtn2 = btn_build(250, 470, "Mouse 2", "data/new.png");
+        button sbtn3 = btn_build(250, 610, "L Shift", "data/new.png");
+        button sbtn4 = btn_build(250, 750, "Tab", "data/new.png");
+        button sbtn5 = btn_build(250, 890, "Esc", "data/new.png");
+
+        while(1) {
+            al_wait_for_event(queue, &event);
+
+            switch(event.type) {
+                case ALLEGRO_EVENT_TIMER:
+                    redraw = true;
+                    break;
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                    btn_click(sbtn0, event.mouse, &scbtn0);
+                    break;
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                    done = true;
+                    break;
+            }
+
+            if(scbtn0 == 1) {
+                curr = menu;
+                break;
+            } else if(done) {
+                curr = exit;
+                break;
+            }
+
+            if(redraw && al_is_event_queue_empty(queue)) {
+                al_clear_to_color(al_map_rgb(45, 45, 45));
+                al_draw_filled_rectangle(0, 0, 1920, 140, al_map_rgb(15, 15, 15));
+                al_draw_filled_rectangle(20, 240, 950, 980, al_map_rgb(15, 15, 15));
+                al_draw_filled_rectangle(970, 240, 1900, 980, al_map_rgb(15, 15, 15));
+                btn_draw(sbtn0, font, &scbtn0);
+                btn_draw(sbtn1, font, &ignore);
+                btn_draw(sbtn2, font, &ignore);
+                btn_draw(sbtn3, font, &ignore);
+                btn_draw(sbtn4, font, &ignore);
+                btn_draw(sbtn5, font, &ignore);
+                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 330 - al_get_font_line_height(font) / 2, 0, "Place wire and objects.");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 470 - al_get_font_line_height(font) / 2, 0, "Erase wire and objects.");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 610 - al_get_font_line_height(font) / 2, 0, "Lock placement axis.");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 750 - al_get_font_line_height(font) / 2, 0, "Toggle grid overlay.");
+                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 890 - al_get_font_line_height(font) / 2, 0, "Deselect current object.");
+                al_flip_display();
+                redraw = false;
+            }
+        }
+
+        al_destroy_bitmap(sbtn0.bit);
+        al_destroy_bitmap(sbtn1.bit);
+        al_destroy_bitmap(sbtn2.bit);
+        al_destroy_bitmap(sbtn3.bit);
+        al_destroy_font(font);
+        al_flush_event_queue(queue);
+
+        goto start;
+
+    } else if (curr == canvas) {
         bool grid = false;
         int click = 0, wait = 0, lock = 0, x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
         int cbtna = 0, cbtnn = 0, cbtnf = 0, cbtnl = 0, cbtnr = 0, cbtnx = 0, select = 0;
         int map[96][50];
-        memset(map, 0, sizeof(map));
+        load_canvas(map);
 
-        ALLEGRO_FONT *font = al_load_ttf_font("mont.otf", 26, 0);
-        button abtn = btn_build(660, 1040, "AND", "select.png");
-        button nbtn = btn_build(810, 1040, "NOT", "select.png");
-        button fbtn = btn_build(960, 1040, "Switch", "select.png");
-        button lbtn = btn_build(1110, 1040, "Light", "select.png");
-        button rbtn = btn_build(1260, 1040, "Crossing", "select.png");
-        button xbtn = btn_build(1680, 1040, "Exit", "select.png");
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 26, 0);
+        button abtn = btn_build(660, 1040, "AND", "data/select.png");
+        button nbtn = btn_build(810, 1040, "NOT", "data/select.png");
+        button fbtn = btn_build(960, 1040, "Switch", "data/select.png");
+        button lbtn = btn_build(1110, 1040, "Light", "data/select.png");
+        button rbtn = btn_build(1260, 1040, "Crossing", "data/select.png");
+        button xbtn = btn_build(1680, 1040, "Menu", "data/select.png");
 
         while(1) {
             al_wait_for_event(queue, &event);
-            al_get_mouse_state(&state);
+            al_get_mouse_state(&mstate);
             al_get_keyboard_state(&kstate);
 
             switch (event.type) {
                 case ALLEGRO_EVENT_TIMER:
                     wire_sim(map, 0, 0, 0);
                     chip_sim(map);
+                    wait--;
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    if(m_range(state, 0, 1920, 0, 1000)) {
-                        if(lock == 1) {lock_coords(&lock, &lx, &ly, state);}
+                    if(m_range(mstate, 0, 1920, 0, 1000)) {
+                        if(lock == 1) {lock_coords(&lock, &lx, &ly, mstate);}
                         click = 1;
                     } else if(btn_click(abtn, event.mouse, &cbtna)) {
                         select = (select == 1) ? 0 : 1;
@@ -149,7 +220,7 @@ int main(void) {
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
                         select = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
-                        lock_coords(&lock, &lx, &ly, state);
+                        lock_coords(&lock, &lx, &ly, mstate);
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_TAB) {
                         grid = !grid;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) {
@@ -169,25 +240,25 @@ int main(void) {
             }
 
             if(done || cbtnx == 1) {
-                scene = 1;
+                curr = menu;
                 break;
             }
 
             if(click) {
-                x = r_lim(0, floor(state.x / 20), 95);
-                y = r_lim(0, floor(state.y / 20), 49);
+                x = r_lim(0, mstate.x / 20, 95);
+                y = r_lim(0, mstate.y / 20, 49);
                 
                 lock_handler(&lock, lx, ly, &x, &y, &dirx, &diry);
 
-                wait = r_lim(0, wait, 10);
+                wait = r_lim(0, wait, 20);
 
-                click_handler(map, state, x, y, select, &wait);
+                click_handler(map, mstate, x, y, select, &wait);
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(al_map_rgb(45, 45, 45));
             
-                draw_map(false, grid, map, font);
+                draw_map(grid, map, font);
 
                 btn_draw(abtn, font, &cbtna);
                 btn_draw(nbtn, font, &cbtnn);
@@ -200,13 +271,13 @@ int main(void) {
 
                 al_draw_filled_rectangle(475, 1000, 485, 1080, al_map_rgb(170, 30, 30));
                 al_draw_filled_rectangle(1435, 1000, 1445, 1080, al_map_rgb(170, 30, 30));
-
+                
                 al_flip_display();
                 redraw = false;
             }
-
-            wait--;
         }
+
+        save_canvas(map);
 
         al_destroy_font(font);
         al_destroy_bitmap(abtn.bit);
