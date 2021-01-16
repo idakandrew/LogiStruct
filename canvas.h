@@ -3,14 +3,14 @@
 
 #include <allegro5/allegro_font.h>
 
-typedef enum component {empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, 
-    and, not, lolight, hilight, loflip, hiflip, cross} comp;
+typedef enum component {empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, oboard, 
+    and, not, or, lolight, hilight, loflip, hiflip, cross} comp;
 
 bool m_range(ALLEGRO_MOUSE_STATE mouse, int xmin, int xmax, int ymin, int ymax);
 
 int r_lim(int min, int val, int max);
 
-void draw_map(bool menu, bool grid, int map[96][50], ALLEGRO_FONT *font);
+void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font);
 
 void place_chip(int x, int y, comp chip, int map[96][50]);
 

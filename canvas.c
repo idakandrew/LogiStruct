@@ -16,12 +16,12 @@ int r_lim(int min, int val, int max) {
     else {return val;}
 } 
 
-void draw_map(bool menu, bool grid, int map[96][50], ALLEGRO_FONT *font) {
+void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
     int xs[192];
     int ys[192];
     int saved = 0;
 
-    if(!menu) {al_draw_filled_rectangle(0, 1000, 1920, 1080, al_map_rgb(15, 15, 15));}
+    al_draw_filled_rectangle(0, 1000, 1920, 1080, al_map_rgb(15, 15, 15));
 
     for(int i = 0; i < 96; i++) {
         for(int j = 0; j < 50; j++) {
@@ -147,6 +147,8 @@ void place_chip(int x, int y, comp chip, int map[96][50]) {
 }
 
 void remove_chip(int map[96][50], int x, int y) {
+    x = r_lim(0, x, 95);
+    y = r_lim(0, y, 49);
     if(map[x][y] > hipinout) {
         map[x][y] = empty;
         remove_chip(map, x+1, y);
@@ -173,23 +175,23 @@ int flip_switch(int map[96][50], int x, int y, int mode) {
         flip_switch(map, x, y-1, 2);
     }
     if(!mode) {
-        return 10;
+        return 20;
     }
     return 0;
 }
 
 void lock_coords(int *lock, int *lx, int *ly, ALLEGRO_MOUSE_STATE state) {
     *lock = 2;
-    *lx = floor(state.x / 20); 
-    *ly = floor(state.y / 20);
+    *lx = state.x / 20; 
+    *ly = state.y / 20;
 }
 
 void lock_handler(int *lock, int lx, int ly, int *x, int *y, int *dirx, int *diry) {
     if(*lock == 2) {
         *dirx = abs(lx - *x);
         *diry = abs(ly - *y);
-        *lock -= floor(*dirx);
-        *lock -= floor(*diry);
+        *lock -= *dirx;
+        *lock -= *diry;
     }
     if(*dirx == 1) {
         *y = ly;
