@@ -8,6 +8,8 @@
 #include "ui.h"
 
 #define length(v) (sizeof(v) / sizeof(*v))
+#define txtcolor al_map_rgb(200, 200, 200)
+#define bgcolor al_map_rgb(45, 45, 45)
 
 int main(void) {
     fix_dir();
@@ -44,12 +46,15 @@ int main(void) {
     start:
 
     if(curr == menu) {
-        int mcbtn0 = 0, mcbtn1 = 0, mcbtn2 = 0;
-
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
-        button mbtn0 = btn_build(960, 500, "Canvas", "data/new.png");
-        button mbtn1 = btn_build(960, 650, "Controls", "data/new.png");
-        button mbtn2 = btn_build(960, 800, "Exit", "data/new.png");
+
+        int mcbtnlist[3] = {0, 0, 0};
+
+        button mbtnlist[3] = {
+            btn_build(960, 500, "Canvas", "data/new.png"), btn_build(960, 650, "Controls", "data/new.png"),
+            btn_build(960, 800, "Exit", "data/new.png")
+        };
+        
         ALLEGRO_BITMAP *logo = al_load_bitmap("data/logo.png");
         ALLEGRO_BITMAP *bg = al_load_bitmap("data/bg.png");
 
@@ -61,45 +66,41 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    btn_click(mbtn0, event.mouse, &mcbtn0);
-                    btn_click(mbtn1, event.mouse, &mcbtn1);
-                    btn_click(mbtn2, event.mouse, &mcbtn2);
+                    for(int i = 0; i < 3; i++) {btn_click(mbtnlist[i], event.mouse, &mcbtnlist[i]);}
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     done = true;
                     break;
             }
 
-            if(mcbtn0 == 1) {
+            if(mcbtnlist[0] == 1) {
                 curr = canvas;
                 break;
-            } else if(mcbtn1 == 1) {
+            } else if(mcbtnlist[1] == 1) {
                 curr = settings;
                 break;
-            } else if(done || mcbtn2 == 1) {
+            } else if(done || mcbtnlist[2] == 1) {
                 curr = exit;
                 break;
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
-                al_clear_to_color(al_map_rgb(45, 45, 45));
+                al_clear_to_color(bgcolor);
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, al_map_rgb(15, 15, 15));
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, al_map_rgb(200, 200, 200), 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
-                btn_draw(mbtn0, font, &mcbtn0);
-                btn_draw(mbtn1, font, &mcbtn1);
-                btn_draw(mbtn2, font, &mcbtn2);
+                al_draw_text(font, txtcolor, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
+                al_draw_text(font, txtcolor, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
+                
+                for(int i = 0; i < 3; i++) {btn_draw(mbtnlist[i], font, &mcbtnlist[i]);}
+
                 al_flip_display();
                 redraw = false;
             }
         }
 
         al_destroy_bitmap(logo);
-        al_destroy_bitmap(mbtn0.bit);
-        al_destroy_bitmap(mbtn1.bit);
-        al_destroy_bitmap(mbtn2.bit);
+        for(int i = 0; i < 3; i++) {al_destroy_bitmap(mbtnlist[i].bit);}
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
@@ -111,7 +112,7 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button btnlist[7] = {
+        button sbtnlist[7] = {
             btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "Mouse 1", "data/new.png"), 
             btn_build(250, 470, "Mouse 2", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
             btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
@@ -134,7 +135,7 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    btn_click(btnlist[0], event.mouse, &scbtn0);
+                    btn_click(sbtnlist[0], event.mouse, &scbtn0);
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     done = true;
@@ -150,18 +151,18 @@ int main(void) {
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
-                al_clear_to_color(al_map_rgb(45, 45, 45));
+                al_clear_to_color(bgcolor);
 
                 al_draw_filled_rectangle(0, 0, 1920, 140, al_map_rgb(15, 15, 15));
                 al_draw_filled_rectangle(20, 240, 950, 980, al_map_rgb(15, 15, 15));
                 al_draw_filled_rectangle(970, 240, 1900, 980, al_map_rgb(15, 15, 15));
 
-                for (int i = 0; i < length(btnlist); i++) {
-                    btn_draw(btnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
+                for (int i = 0; i < length(sbtnlist); i++) {
+                    btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
                 }
 
                 for(int i = 0; i < length(textlist); i++) {
-                    al_draw_text(font, al_map_rgb(200, 200, 200), xlist[i], ylist[i] - halfline, 0, textlist[i]);
+                    al_draw_text(font, txtcolor, xlist[i], ylist[i] - halfline, 0, textlist[i]);
                 }
 
                 al_flip_display();
@@ -169,7 +170,7 @@ int main(void) {
             }
         }
 
-        for(int i = 0; i < 7; i++) {al_destroy_bitmap(btnlist[i].bit);}
+        for(int i = 0; i < 7; i++) {al_destroy_bitmap(sbtnlist[i].bit);}
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
@@ -264,7 +265,7 @@ int main(void) {
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
-                al_clear_to_color(al_map_rgb(45, 45, 45));
+                al_clear_to_color(bgcolor);
             
                 draw_map(grid, map, font);
 
@@ -276,6 +277,8 @@ int main(void) {
                 btn_draw(xbtn, font, &cbtnx);
                 
                 text_select(select, font);
+
+                // this red doesnt match up with wires (170 vs 200)
 
                 al_draw_filled_rectangle(475, 1000, 485, 1080, al_map_rgb(170, 30, 30));
                 al_draw_filled_rectangle(1435, 1000, 1445, 1080, al_map_rgb(170, 30, 30));
