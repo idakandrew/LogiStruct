@@ -12,7 +12,7 @@ Latest: v0.1
 ```
 windres icon.rc -O coff -o icon.res
 ```
-4. Compile via GCC using: 
+5. Compile via GCC using: 
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h icon.res -o Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
