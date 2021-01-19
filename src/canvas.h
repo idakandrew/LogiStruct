@@ -10,7 +10,7 @@
 #define nearblack al_map_rgb(15, 15, 15)
 #define black al_map_rgb(0, 0, 0)
 #define redblack al_map_rgb(80, 0, 0)
-#define red al_map_rgb(200, 30, 30)
+#define red al_map_rgb(170, 30, 30)
 #define gold al_map_rgb(150, 150, 0)
 #define green al_map_rgb(0, 180, 80)
 #define blue al_map_rgb(0, 80, 180)

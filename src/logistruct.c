@@ -8,8 +8,6 @@
 #include "ui.h"
 
 #define length(v) (sizeof(v) / sizeof(*v))
-#define txtcolor al_map_rgb(200, 200, 200)
-#define bgcolor al_map_rgb(45, 45, 45)
 
 int main(void) {
     fix_dir();
@@ -89,10 +87,10 @@ int main(void) {
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(bgcolor);
                 al_draw_bitmap(bg, 0, 0, 0);
-                al_draw_filled_rectangle(590, 0, 1330, 1080, al_map_rgb(15, 15, 15));
+                al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, txtcolor, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
-                al_draw_text(font, txtcolor, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 19, 2021)");
+                al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < length(mbtnlist); i++) {
                     btn_draw(mbtnlist[i], font, &mcbtnlist[i]);
@@ -159,16 +157,16 @@ int main(void) {
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(bgcolor);
 
-                al_draw_filled_rectangle(0, 0, 1920, 140, al_map_rgb(15, 15, 15));
-                al_draw_filled_rectangle(20, 240, 950, 980, al_map_rgb(15, 15, 15));
-                al_draw_filled_rectangle(970, 240, 1900, 980, al_map_rgb(15, 15, 15));
+                al_draw_filled_rectangle(0, 0, 1920, 140, nearblack);
+                al_draw_filled_rectangle(20, 240, 950, 980, nearblack);
+                al_draw_filled_rectangle(970, 240, 1900, 980, nearblack);
 
                 for (int i = 0; i < length(sbtnlist); i++) {
                     btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
                 }
 
                 for(int i = 0; i < length(textlist); i++) {
-                    al_draw_text(font, txtcolor, xlist[i], ylist[i] - halfline, 0, textlist[i]);
+                    al_draw_text(font, white, xlist[i], ylist[i] - halfline, 0, textlist[i]);
                 }
 
                 al_flip_display();
@@ -283,10 +281,8 @@ int main(void) {
                 
                 text_select(select, font);
 
-                // this red doesnt match up with wires (170 vs 200)
-
-                al_draw_filled_rectangle(475, 1000, 485, 1080, al_map_rgb(170, 30, 30));
-                al_draw_filled_rectangle(1435, 1000, 1445, 1080, al_map_rgb(170, 30, 30));
+                al_draw_filled_rectangle(475, 1010, 485, 1070, red);
+                al_draw_filled_rectangle(1435, 1010, 1445, 1070, red);
                 
                 al_flip_display();
                 redraw = false;
