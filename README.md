@@ -5,6 +5,7 @@ LogiStruct is an in-development logic simulator designed around a pixel canvas s
 
 ![screen](https://github.com/idakandrew/logistruct/blob/main/screenshot.png?raw=true)
 
+(A simple D-Latch)
 ## Version
 Latest: v0.1 (Jan 19, 2021)
 ## Installation
