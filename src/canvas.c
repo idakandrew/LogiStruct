@@ -17,48 +17,37 @@ int r_lim(int min, int val, int max) {
 } 
 
 void draw_map(bool grid, int map[96][50], ALLEGRO_FONT *font) {
+    ALLEGRO_COLOR colormap[18] = {
+        bgcolor, mediumgrey, red, black, redblack, black, redblack, green,
+        blue, green, blue, lightgrey, white, black, redblack, gold
+    };
     int xs[192];
     int ys[192];
     int saved = 0;
 
-    al_draw_filled_rectangle(0, 1000, 1920, 1080, al_map_rgb(15, 15, 15));
+    al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
     for(int i = 0; i < 96; i++) {
         for(int j = 0; j < 50; j++) {
             if(grid) {
-                al_draw_line(i*20, j*20, i*20+20, j*20, al_map_rgb(15, 15, 15), 1);
-                al_draw_line(i*20, j*20, i*20, j*20+20, al_map_rgb(15, 15, 15), 1);
+                al_draw_line(i*20, j*20, i*20+20, j*20, nearblack, 1);
+                al_draw_line(i*20, j*20, i*20, j*20+20, nearblack, 1);
             }
             
-            if(map[i][j] == lowire) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(30, 30, 30));
-            } else if(map[i][j] == hiwire) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(200, 30, 30)); 
-            } else if(map[i][j] == and || map[i][j] == aboard) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 180, 80));
-                if(map[i][j] == and) {xs[saved] = i, ys[saved] = j, saved++;}
-            } else if(map[i][j] == not || map[i][j] == nboard) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 80, 180));
-                if(map[i][j] == not) {xs[saved] = i, ys[saved] = j, saved++;}
-            } else if(map[i][j] == cross) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(150, 150, 0));
-            } else if(map[i][j] == lopinin || map[i][j] == lopinout || map[i][j] == loflip) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(0, 0, 0));
-            } else if (map[i][j] == hipinin || map[i][j] == hipinout || map[i][j] == hiflip) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(80, 0, 0));
-            } else if(map[i][j] == lolight) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(100, 100, 100));
-            } else if(map[i][j] == hilight) {
-                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, al_map_rgb(200, 200, 200));
+            if(map[i][j] != empty) {
+                al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, colormap[map[i][j]]);
+                if(map[i][j] == and || map[i][j] == not) {
+                    xs[saved] = i, ys[saved] = j, saved++;
+                }
             }
         }
     }
 
     for(int i = 0; i < saved; i++) {
         if(map[xs[i]][ys[i]] == and) {
-            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "AND");
+            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "AND");
         } else if(map[xs[i]][ys[i]] == not) {
-            al_draw_text(font, al_map_rgb(200, 200, 200), xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOT");
+            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOT");
         }
     }
 }

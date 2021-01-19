@@ -3,8 +3,23 @@
 
 #include <allegro5/allegro_font.h>
 
-typedef enum component {empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, oboard, 
-    and, not, or, lolight, hilight, loflip, hiflip, cross} comp;
+#define white al_map_rgb(200, 200, 200)
+#define lightgrey al_map_rgb(100, 100, 100)
+#define mediumgrey al_map_rgb(30, 30, 30)
+#define bgcolor al_map_rgb(45, 45, 45)
+#define nearblack al_map_rgb(15, 15, 15)
+#define black al_map_rgb(0, 0, 0)
+#define redblack al_map_rgb(80, 0, 0)
+#define red al_map_rgb(200, 30, 30)
+#define gold al_map_rgb(150, 150, 0)
+#define green al_map_rgb(0, 180, 80)
+#define blue al_map_rgb(0, 80, 180)
+
+typedef enum component {
+    empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, 
+    and, not, lolight, hilight, loflip, hiflip, cross
+} comp;
+
 
 bool m_range(ALLEGRO_MOUSE_STATE mouse, int xmin, int xmax, int ymin, int ymax);
 
