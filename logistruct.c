@@ -66,7 +66,9 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    for(int i = 0; i < 3; i++) {btn_click(mbtnlist[i], event.mouse, &mcbtnlist[i]);}
+                    for(int i = 0; i < length(mbtnlist); i++) {
+                        btn_click(mbtnlist[i], event.mouse, &mcbtnlist[i]);
+                    }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     done = true;
@@ -92,7 +94,9 @@ int main(void) {
                 al_draw_text(font, txtcolor, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 8, 2021)");
                 al_draw_text(font, txtcolor, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
-                for(int i = 0; i < 3; i++) {btn_draw(mbtnlist[i], font, &mcbtnlist[i]);}
+                for(int i = 0; i < length(mbtnlist); i++) {
+                    btn_draw(mbtnlist[i], font, &mcbtnlist[i]);
+                }
 
                 al_flip_display();
                 redraw = false;
@@ -100,7 +104,9 @@ int main(void) {
         }
 
         al_destroy_bitmap(logo);
-        for(int i = 0; i < 3; i++) {al_destroy_bitmap(mbtnlist[i].bit);}
+        for(int i = 0; i < length(mbtnlist); i++) {
+            al_destroy_bitmap(mbtnlist[i].bit);
+        }
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
@@ -170,7 +176,9 @@ int main(void) {
             }
         }
 
-        for(int i = 0; i < 7; i++) {al_destroy_bitmap(sbtnlist[i].bit);}
+        for(int i = 0; i < length(sbtnlist); i++) {
+            al_destroy_bitmap(sbtnlist[i].bit);
+        }
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
@@ -178,18 +186,20 @@ int main(void) {
 
     } else if (curr == canvas) {
         bool grid = false;
-        int click = 0, wait = 0, lock = 0, x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
-        int cbtna = 0, cbtnn = 0, cbtnf = 0, cbtnl = 0, cbtnr = 0, cbtnx = 0, select = 0;
+        int x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
+        int click = 0, wait = 0, lock = 0, select = 0;
         int map[96][50];
         load_canvas(map);
 
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 26, 0);
-        button abtn = btn_build(660, 1040, "AND", "data/select.png");
-        button nbtn = btn_build(810, 1040, "NOT", "data/select.png");
-        button fbtn = btn_build(960, 1040, "Switch", "data/select.png");
-        button lbtn = btn_build(1110, 1040, "Light", "data/select.png");
-        button rbtn = btn_build(1260, 1040, "Crossing", "data/select.png");
-        button xbtn = btn_build(1680, 1040, "Menu", "data/select.png");
+
+        int ccbtnlist[6] = {0, 0, 0, 0, 0, 0};
+
+        button cbtnlist[6] = {
+            btn_build(1680, 1040, "Menu", "data/select.png"), btn_build(660, 1040, "AND", "data/select.png"), 
+            btn_build(810, 1040, "NOT", "data/select.png"), btn_build(960, 1040, "Switch", "data/select.png"), 
+            btn_build(1110, 1040, "Light", "data/select.png"), btn_build(1260, 1040, "Crossing", "data/select.png"), 
+        };
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -205,20 +215,18 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                     if(m_range(mstate, 0, 1920, 0, 1000)) {
-                        if(lock == 1) {lock_coords(&lock, &lx, &ly, mstate);}
+                        if(lock == 1) {
+                            lock_coords(&lock, &lx, &ly, mstate);
+                        }
                         click = 1;
-                    } else if(btn_click(abtn, event.mouse, &cbtna)) {
-                        select = (select == 1) ? 0 : 1;
-                    } else if(btn_click(nbtn, event.mouse, &cbtnn)) {
-                        select = (select == 2) ? 0 : 2;
-                    } else if(btn_click(fbtn, event.mouse, &cbtnf)) {
-                        select = (select == 3) ? 0 : 3;
-                    } else if(btn_click(lbtn, event.mouse, &cbtnl)) {
-                        select = (select == 4) ? 0 : 4;
-                    } else if(btn_click(rbtn, event.mouse, &cbtnr)) {
-                        select = (select == 5) ? 0 : 5;
+                    } else {
+                        btn_click(cbtnlist[0], event.mouse, &ccbtnlist[0]);
+                        for(int i = 1; i < length(cbtnlist); i++) {
+                            if(btn_click(cbtnlist[i], event.mouse, &ccbtnlist[i])) {
+                                select = (select == i) ? 0 : i;
+                            }
+                        }
                     }
-                    btn_click(xbtn, event.mouse, &cbtnx);
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     click = 0;
@@ -248,7 +256,7 @@ int main(void) {
                     break;
             }
 
-            if(done || cbtnx == 1) {
+            if(done || ccbtnlist[0] == 1) {
                 curr = menu;
                 break;
             }
@@ -269,12 +277,9 @@ int main(void) {
             
                 draw_map(grid, map, font);
 
-                btn_draw(abtn, font, &cbtna);
-                btn_draw(nbtn, font, &cbtnn);
-                btn_draw(fbtn, font, &cbtnf);
-                btn_draw(lbtn, font, &cbtnl);
-                btn_draw(rbtn, font, &cbtnr);
-                btn_draw(xbtn, font, &cbtnx);
+                for (int i = 0; i < length(cbtnlist); i++) {
+                    btn_draw(cbtnlist[i], font, &ccbtnlist[i]);
+                }
                 
                 text_select(select, font);
 
@@ -291,12 +296,9 @@ int main(void) {
         save_canvas(map);
 
         al_destroy_font(font);
-        al_destroy_bitmap(abtn.bit);
-        al_destroy_bitmap(nbtn.bit);
-        al_destroy_bitmap(fbtn.bit);
-        al_destroy_bitmap(lbtn.bit);
-        al_destroy_bitmap(rbtn.bit);
-        al_destroy_bitmap(xbtn.bit);
+        for(int i = 0; i < length(cbtnlist); i++) {
+            al_destroy_bitmap(cbtnlist[i].bit);
+        }
         al_flush_event_queue(queue);
 
         goto start;
