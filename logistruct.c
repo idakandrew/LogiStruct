@@ -7,6 +7,8 @@
 #include "sim.h"
 #include "ui.h"
 
+#define length(v) (sizeof(v) / sizeof(*v))
+
 int main(void) {
     fix_dir();
     al_init();
@@ -107,12 +109,22 @@ int main(void) {
         int scbtn0 = 0, ignore = 0;
 
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
-        button sbtn0 = btn_build(250, 70, "Menu", "data/new.png");
-        button sbtn1 = btn_build(250, 330, "Mouse 1", "data/new.png");
-        button sbtn2 = btn_build(250, 470, "Mouse 2", "data/new.png");
-        button sbtn3 = btn_build(250, 610, "L Shift", "data/new.png");
-        button sbtn4 = btn_build(250, 750, "Tab", "data/new.png");
-        button sbtn5 = btn_build(250, 890, "Esc", "data/new.png");
+        int halfline = al_get_font_line_height(font) / 2;
+
+        button btnlist[7] = {
+            btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "Mouse 1", "data/new.png"), 
+            btn_build(250, 470, "Mouse 2", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
+            btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
+            btn_build(1200, 330, "Backspace", "data/new.png")
+        };
+
+        char const *textlist[6] = {
+            "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
+            "Toggle grid overlay.", "Deselect current object.", "Clear canvas."
+        };
+
+        int xlist[6] = {490, 490, 490, 490, 490, 1440};
+        int ylist[6] = {330, 470, 610, 750, 890, 330};
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -122,7 +134,7 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    btn_click(sbtn0, event.mouse, &scbtn0);
+                    btn_click(btnlist[0], event.mouse, &scbtn0);
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     done = true;
@@ -139,29 +151,25 @@ int main(void) {
 
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(al_map_rgb(45, 45, 45));
+
                 al_draw_filled_rectangle(0, 0, 1920, 140, al_map_rgb(15, 15, 15));
                 al_draw_filled_rectangle(20, 240, 950, 980, al_map_rgb(15, 15, 15));
                 al_draw_filled_rectangle(970, 240, 1900, 980, al_map_rgb(15, 15, 15));
-                btn_draw(sbtn0, font, &scbtn0);
-                btn_draw(sbtn1, font, &ignore);
-                btn_draw(sbtn2, font, &ignore);
-                btn_draw(sbtn3, font, &ignore);
-                btn_draw(sbtn4, font, &ignore);
-                btn_draw(sbtn5, font, &ignore);
-                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 330 - al_get_font_line_height(font) / 2, 0, "Place wire and objects.");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 470 - al_get_font_line_height(font) / 2, 0, "Erase wire and objects.");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 610 - al_get_font_line_height(font) / 2, 0, "Lock placement axis.");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 750 - al_get_font_line_height(font) / 2, 0, "Toggle grid overlay.");
-                al_draw_text(font, al_map_rgb(200, 200, 200), 490, 890 - al_get_font_line_height(font) / 2, 0, "Deselect current object.");
+
+                for (int i = 0; i < length(btnlist); i++) {
+                    btn_draw(btnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
+                }
+
+                for(int i = 0; i < length(textlist); i++) {
+                    al_draw_text(font, al_map_rgb(200, 200, 200), xlist[i], ylist[i] - halfline, 0, textlist[i]);
+                }
+
                 al_flip_display();
                 redraw = false;
             }
         }
 
-        al_destroy_bitmap(sbtn0.bit);
-        al_destroy_bitmap(sbtn1.bit);
-        al_destroy_bitmap(sbtn2.bit);
-        al_destroy_bitmap(sbtn3.bit);
+        for(int i = 0; i < 7; i++) {al_destroy_bitmap(btnlist[i].bit);}
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
