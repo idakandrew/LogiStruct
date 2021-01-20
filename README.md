@@ -8,11 +8,12 @@ Latest: v0.1 (Jan 19, 2021)
 1. Download and install Allegro version 5.2.6.0 from https://github.com/liballeg/allegro5/releases. 
 2. Ensure that Allegro library files are on your include path. 
 3. Clone this repository locally. 
+4. Create /bin/ in /Logistruct/.
 4. Navigate to /data/ & compile the icon using:
 ```
 windres icon.rc -O coff -o icon.res
 ```
-5. Navigate to /src/ & compile via GCC using: 
+6. Navigate to /src/ & compile via GCC using: 
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data/icon.res -o ../bin/Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
