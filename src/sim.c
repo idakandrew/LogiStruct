@@ -1,6 +1,6 @@
 #include "canvas.h"
 
-void chip_sim(int map[96][50]) {
+void chip_sim(int map[MAP_X][MAP_Y]) {
     for(int i = 0; i < 96; i++) {
         for(int j = 0; j < 50; j++) {
             if(map[i][j] == and) {
@@ -20,7 +20,7 @@ void chip_sim(int map[96][50]) {
     }
 }
 
-void wire_sim(int map[96][50], int x, int y, int mode) {
+void wire_sim(int map[MAP_X][MAP_Y], int x, int y, int mode) {
     if(!mode) {
         for(int i = 0; i < 96; i++) {
             for(int j = 0; j < 50; j++) {
@@ -37,18 +37,32 @@ void wire_sim(int map[96][50], int x, int y, int mode) {
         for(int i = 0; i < 96; i++) {
             for(int j = 0; j < 50; j++) {
                 if(map[i][j] == hipinout || map[i][j] == hiflip) {
-                    if(map[i+1][j] == lowire || map[i+1][j] == lolight || map[i+1][j] == lopinin) {wire_sim(map, i+1, j, 1);}
-                    if(map[i-1][j] == lowire || map[i-1][j] == lolight || map[i-1][j] == lopinin) {wire_sim(map, i-1, j, 1);}
-                    if(map[i][j+1] == lowire || map[i][j+1] == lolight || map[i][j+1] == lopinin) {wire_sim(map, i, j+1, 1);}
-                    if(map[i][j-1] == lowire || map[i][j-1] == lolight || map[i][j-1] == lopinin) {wire_sim(map, i, j-1, 1);}
+                    if(map[i+1][j] == lowire || map[i+1][j] == lolight || map[i+1][j] == lopinin) {
+                        wire_sim(map, i+1, j, 1);
+                    }
+                    if(map[i-1][j] == lowire || map[i-1][j] == lolight || map[i-1][j] == lopinin) {
+                        wire_sim(map, i-1, j, 1);
+                    }
+                    if(map[i][j+1] == lowire || map[i][j+1] == lolight || map[i][j+1] == lopinin) {
+                        wire_sim(map, i, j+1, 1);
+                    }
+                    if(map[i][j-1] == lowire || map[i][j-1] == lolight || map[i][j-1] == lopinin) {
+                        wire_sim(map, i, j-1, 1);
+                    }
                 }
             }
         }
         
     } else {
-        if(map[x][y] == lowire) {map[x][y] = hiwire;}
-        else if(map[x][y] == lolight) {map[x][y] = hilight;}
-        else if(map[x][y] == lopinin) {map[x][y] = hipinin;}
+        if(map[x][y] == lowire) {
+            map[x][y] = hiwire;
+        }
+        else if(map[x][y] == lolight) {
+            map[x][y] = hilight;
+        }
+        else if(map[x][y] == lopinin) {
+            map[x][y] = hipinin;
+        }
 
         if(map[x+1][y] == lowire || map[x+1][y] == lolight || map[x+1][y] == lopinin || map[x+1][y] == cross) {
             if (map[x+1][y] == cross && map[x+2][y] == lowire) {

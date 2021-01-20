@@ -15,6 +15,9 @@
 #define green al_map_rgb(0, 180, 80)
 #define blue al_map_rgb(0, 80, 180)
 
+#define MAP_X 96
+#define MAP_Y 50
+
 typedef enum component {
     empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, 
     and, not, lolight, hilight, loflip, hiflip, cross

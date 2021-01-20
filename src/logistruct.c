@@ -186,7 +186,7 @@ int main(void) {
         bool grid = false;
         int x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
         int click = 0, wait = 0, lock = 0, select = 0;
-        int map[96][50];
+        int map[MAP_X][MAP_Y];
         load_canvas(map);
 
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 26, 0);
@@ -260,8 +260,8 @@ int main(void) {
             }
 
             if(click) {
-                x = r_lim(0, mstate.x / 20, 95);
-                y = r_lim(0, mstate.y / 20, 49);
+                x = r_lim(0, mstate.x / 20, MAP_X - 1);
+                y = r_lim(0, mstate.y / 20, MAP_Y - 1);
                 
                 lock_handler(&lock, lx, ly, &x, &y, &dirx, &diry);
 
