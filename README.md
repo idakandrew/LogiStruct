@@ -22,4 +22,5 @@ gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data
 - Redo UI to handle more chip types.
 - Increase canvas size & add zoom / pan features.
 ## Screenshots
-![screen0](https://github.com/idakandrew/logistruct/blob/main/media/screenshot.png?raw=true)
+![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
+![screen](https://github.com/idakandrew/logistruct/blob/main/media/screenshot.png?raw=true)
