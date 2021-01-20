@@ -2,10 +2,6 @@
 
 ## Overview
 LogiStruct is an in-development logic simulator designed around a pixel canvas system. It is written entirely in C, and relies on the Allegro 5 library for graphical and input features. 
-
-![screen](https://github.com/idakandrew/logistruct/blob/main/screenshot.png?raw=true)
-
-(A simple D-Latch)
 ## Version
 Latest: v0.1 (Jan 19, 2021)
 ## Installation
@@ -25,3 +21,5 @@ gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data
 - Select and save canvas region as chip.
 - Redo UI to handle more chip types.
 - Increase canvas size & add zoom / pan features.
+## Screenshots
+![screen](https://github.com/idakandrew/logistruct/blob/main/screenshot.png?raw=true)
