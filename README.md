@@ -23,4 +23,5 @@ gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data
 - Increase canvas size & add zoom / pan features.
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
+
 ![screen](https://github.com/idakandrew/logistruct/blob/main/media/screenshot.png?raw=true)
