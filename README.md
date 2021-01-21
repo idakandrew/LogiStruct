@@ -7,6 +7,7 @@ Latest: v0.1 (Jan 19, 2021)
 ## Installation
 ### Compiled Downloads
 Itch.io page: https://aleainfinitus.itch.io/logistruct
+
 Github releases: https://github.com/idakandrew/LogiStruct/releases
 
 ### Compilation
