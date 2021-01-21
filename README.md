@@ -5,15 +5,16 @@ LogiStruct is an in-development logic simulator designed around a pixel canvas s
 ## Version
 Latest: v0.1 (Jan 19, 2021)
 ## Installation
-### Itch.io
+### Compiled Downloads
 Itch.io page: https://aleainfinitus.itch.io/logistruct
+Github releases: https://github.com/idakandrew/LogiStruct/releases
 
 ### Compilation
 1. Download and install Allegro version 5.2.6.0 from https://github.com/liballeg/allegro5/releases. 
 2. Ensure that Allegro library files are on your include path. 
 3. Clone this repository locally. 
 4. Create /bin/ in /Logistruct/.
-4. Navigate to /data/ & compile the icon using:
+5. Navigate to /data/ & compile the icon using:
 ```
 windres icon.rc -O coff -o icon.res
 ```
@@ -21,6 +22,7 @@ windres icon.rc -O coff -o icon.res
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data/icon.res -o ../bin/Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
+7. Copy the required .dlls from your Allegro / MinGW installation. Compiled releases avoid this step. 
 ## TODO
 - Middle click to select part on canvas.
 - Select and save canvas region as chip.
