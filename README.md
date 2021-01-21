@@ -22,7 +22,17 @@ windres icon.rc -O coff -o icon.res
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data/icon.res -o ../bin/Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
-7. Copy the required .dlls from your Allegro / MinGW installation. Compiled releases avoid this step. 
+7. Copy the following .dlls from your Allegro / MinGW install to /bin/:
+```
+allegro_font-5.2.dll
+allegro_image-5.2.dll
+allegro_primitives-5.2.dll
+allegro_ttf-5.2.dll
+allegro-5.2.dll
+libgcc_s_seh-1.dll
+libstdc++-6.dll
+libwinpthread-1.dll
+```
 ## TODO
 - Middle click to select part on canvas.
 - Select and save canvas region as chip.
