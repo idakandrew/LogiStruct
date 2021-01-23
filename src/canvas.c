@@ -36,7 +36,7 @@ void draw_map(bool grid, int map[MAP_X][MAP_Y], ALLEGRO_FONT *font) {
             
             if(map[i][j] != empty) {
                 al_draw_filled_rectangle(i*20, j*20, i*20+20, j*20+20, colormap[map[i][j]]);
-                if(map[i][j] == and || map[i][j] == not) {
+                if(map[i][j] == nand || map[i][j] == nor) {
                     xs[saved] = i, ys[saved] = j, saved++;
                 }
             }
@@ -44,34 +44,34 @@ void draw_map(bool grid, int map[MAP_X][MAP_Y], ALLEGRO_FONT *font) {
     }
 
     for(int i = 0; i < saved; i++) {
-        if(map[xs[i]][ys[i]] == and) {
-            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "AND");
-        } else if(map[xs[i]][ys[i]] == not) {
-            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOT");
+        if(map[xs[i]][ys[i]] == nand) {
+            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NAND");
+        } else if(map[xs[i]][ys[i]] == nor) {
+            al_draw_text(font, white, xs[i]*20+10, ys[i]*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOR");
         }
     }
 }
 
 void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
-    if(chip == and) {
+    if(chip == nand) {
         x = r_lim(3, x, MAP_X - 1 - 3);
-        y = r_lim(2, y, MAP_Y - 1 - 2);
+        y = r_lim(1, y, MAP_Y - 1 - 1);
         for(int i = x - 4; i < x + 5; i++) {
-            for(int j = y - 3; j < y + 4; j++) {
+            for(int j = y - 2; j < y + 3; j++) {
                 if (map[r_lim(0, i, MAP_X - 1)][r_lim(0, j, MAP_Y - 1)] > hiwire) {
                     goto trip;
                 }
             }
         }
         for(int i = x - 2; i < x + 3; i++) {
-            for(int j = y - 2; j < y + 3; j++) {
+            for(int j = y - 1; j < y + 2; j++) {
                 map[i][j] = aboard;
             }
         }
-        map[x][y] = and;
+        map[x][y] = nand;
         map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
         map[x + 3][y] = lopinout;
-    } else if(chip == not) {
+    } else if(chip == nor) {
         x = r_lim(3, x, MAP_X - 1 - 3);
         y = r_lim(1, y, MAP_Y - 1 - 1);
         for(int i = x - 4; i < x + 5; i++) {
@@ -83,11 +83,11 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
         }
         for(int i = x - 2; i < x + 3; i++) {
             for(int j = y - 1; j < y + 2; j++) {
-                map[i][j] = nboard;
+                map[i][j] = oboard;
             }
         }
-        map[x][y] = not;
-        map[x - 3][y] = lopinin;
+        map[x][y] = nor;
+        map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
         map[x + 3][y] = lopinout;
     } else if(chip == loflip) {
         x = r_lim(1, x, MAP_X - 1 - 1);
@@ -192,8 +192,8 @@ void lock_handler(int *lock, int lx, int ly, int *x, int *y, int *dirx, int *dir
 void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait) {
     if(*wait == 0 && select == 0 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
     else if(map[x][y] > hipinout && state.buttons & 2) {remove_chip(map, x, y);}
-    else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, and, map);}
-    else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, not, map);}
+    else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map);}
+    else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map);}
     else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map);}
     else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map);}
     else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map);}

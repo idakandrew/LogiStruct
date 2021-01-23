@@ -19,8 +19,8 @@
 #define MAP_Y 50
 
 typedef enum component {
-    empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, nboard, 
-    and, not, lolight, hilight, loflip, hiflip, cross
+    empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, oboard, 
+    nand, nor, lolight, hilight, loflip, hiflip, cross
 } comp;
 
 

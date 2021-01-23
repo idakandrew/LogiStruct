@@ -1,18 +1,18 @@
 #include "canvas.h"
 
-void chip_sim(int map[MAP_X][MAP_Y]) {
+void *chip_sim(int map[MAP_X][MAP_Y]) {
     for(int i = 0; i < 96; i++) {
         for(int j = 0; j < 50; j++) {
-            if(map[i][j] == and) {
-                if(map[i-3][j-1] == hipinin && map[i-3][j+1] == hipinin) {
+            if(map[i][j] == nand) {
+                if(map[i-3][j-1] != hipinin || map[i-3][j+1] != hipinin) {
                     map[i+3][j] = hipinout;
-                } else if(map[i-3][j] != hipinin && map[i-3][+1] != hipinin) {
+                } else if(map[i-3][j-1] == hipinin && map[i-3][j+1] == hipinin) {
                     map[i+3][j] = lopinout;
                 }
-            } else if(map[i][j] == not) {
-                if(map[i-3][j] == lopinin) {
+            } else if(map[i][j] == nor) {
+                if(map[i-3][j-1] == lopinin && map[i-3][j+1] == lopinin) {
                     map[i+3][j] = hipinout;
-                } else if(map[i-3][j] == hipinin) {
+                } else if(map[i-3][j-1] == hipinin || map[i-3][j+1] == hipinin) {
                     map[i+3][j] = lopinout;
                 }
             }
@@ -20,7 +20,7 @@ void chip_sim(int map[MAP_X][MAP_Y]) {
     }
 }
 
-void wire_sim(int map[MAP_X][MAP_Y], int x, int y, int mode) {
+void *wire_sim(int map[MAP_X][MAP_Y], int x, int y, int mode) {
     if(!mode) {
         for(int i = 0; i < 96; i++) {
             for(int j = 0; j < 50; j++) {
