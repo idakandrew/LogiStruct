@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <libloaderapi.h>
+#include "utils.h"
 
 void fix_dir(void) {
     char path[1024], *occ;
@@ -10,21 +11,21 @@ void fix_dir(void) {
     chdir(path); 
 }
 
-void save_canvas(int map[96][50]) {
-    FILE *fp = fopen("data/save.bin", "wb");
+void save_canvas(int map[MAP_X][MAP_Y]) {
+    FILE *fp = fopen("../data/save.bin", "wb");
     if(fp != NULL) {
         fseek(fp, 0, SEEK_SET);
-        fwrite(map, sizeof(int)*96*50, 1, fp);
+        fwrite(map, sizeof(int)*MAP_X*MAP_Y, 1, fp);
         fclose(fp);
     }
 }
 
-void load_canvas(int map[95][50]) {
-    FILE *fp = fopen("data/save.bin", "rb");
+void load_canvas(int map[MAP_X][MAP_Y]) {
+    FILE *fp = fopen("../data/save.bin", "rb");
     if(fp != NULL) {
-        fread(map, sizeof(int)*96*50, 1, fp);
+        fread(map, sizeof(int)*MAP_X*MAP_Y, 1, fp);
         fclose(fp);
     } else {
-        memset(map, 0, sizeof(int)*96*50);
+        memset(map, 0, sizeof(int)*MAP_X*MAP_Y);
     }
 }

@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include "canvas.h"
 
 void *chip_sim(int map[MAP_X][MAP_Y]) {
@@ -22,8 +23,8 @@ void *chip_sim(int map[MAP_X][MAP_Y]) {
 
 void *wire_sim(int map[MAP_X][MAP_Y], int x, int y, int mode) {
     if(!mode) {
-        for(int i = 0; i < 96; i++) {
-            for(int j = 0; j < 50; j++) {
+        for(int i = 0; i < MAP_X; i++) {
+            for(int j = 0; j < MAP_Y; j++) {
                 if(map[i][j] == hiwire) {
                     map[i][j] = lowire;
                 } else if(map[i][j] == hilight) {
@@ -34,8 +35,8 @@ void *wire_sim(int map[MAP_X][MAP_Y], int x, int y, int mode) {
             }
         }
 
-        for(int i = 0; i < 96; i++) {
-            for(int j = 0; j < 50; j++) {
+        for(int i = 0; i < MAP_X; i++) {
+            for(int j = 0; j < MAP_Y; j++) {
                 if(map[i][j] == hipinout || map[i][j] == hiflip) {
                     if(map[i+1][j] == lowire || map[i+1][j] == lolight || map[i+1][j] == lopinin) {
                         wire_sim(map, i+1, j, 1);

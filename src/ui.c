@@ -1,5 +1,6 @@
 #include <allegro5/allegro_primitives.h>
 #include "ui.h"
+#include "canvas.h"
 
 
 button btn_build(float cex, float cey, char *text, char *file) {
@@ -27,7 +28,7 @@ void btn_draw(button btn, ALLEGRO_FONT *font, int *time) {
         (*time)--;
     } 
 
-    al_draw_text(font, al_map_rgb(200, 200, 200), btn.cex, btn.cey - al_get_font_line_height(font) / 2 - 4, ALLEGRO_ALIGN_CENTRE, btn.text);
+    al_draw_text(font, white, btn.cex, btn.cey - al_get_font_line_height(font) / 2 - 4, ALLEGRO_ALIGN_CENTRE, btn.text);
 }
 
 bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time) {
@@ -41,11 +42,13 @@ bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time) {
     return false;
 }
 
-void text_select(int select, ALLEGRO_FONT *font) {
-    if(select == 0) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Wire");}
-    else if(select == 1) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: AND");}
-    else if(select == 2) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: NOT");}
-    else if(select == 3) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Switch");}
-    else if(select == 4) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Light");}
-    else if(select == 5) {al_draw_text(font, al_map_rgb(200, 200, 200), 240, 1040 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Crossing");}
+void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font) {
+    al_draw_textf(font, white, 240, 1055 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Coordinates: (%d : %d)", cx, cy);
+    
+    if(select == 0) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Wire");}
+    else if(select == 1) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: AND");}
+    else if(select == 2) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: NOT");}
+    else if(select == 3) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Switch");}
+    else if(select == 4) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Light");}
+    else if(select == 5) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Crossing");}
 }

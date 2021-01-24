@@ -1,5 +1,4 @@
 #include <math.h>
-#include <pthread.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_ttf.h>
@@ -118,8 +117,8 @@ int main(void) {
         int halfline = al_get_font_line_height(font) / 2;
 
         button sbtnlist[7] = {
-            btn_build(250, 70, "Menu", "../data/new.png"), btn_build(250, 330, "Mouse 1", "../data/new.png"), 
-            btn_build(250, 470, "Mouse 2", "../data/new.png"), btn_build(250, 610, "L Shift", "../data/new.png"), 
+            btn_build(250, 70, "Menu", "../data/new.png"), btn_build(250, 330, "L Mouse", "../data/new.png"), 
+            btn_build(250, 470, "R Mouse", "../data/new.png"), btn_build(250, 610, "L Shift", "../data/new.png"), 
             btn_build(250, 750, "Tab", "../data/new.png"), btn_build(250, 890, "Esc", "../data/new.png"), 
             btn_build(1200, 330, "Backspace", "../data/new.png")
         };
@@ -184,9 +183,10 @@ int main(void) {
         goto start;
 
     } else if (curr == canvas) {
-        bool grid = false;
+        bool grid = false, drag = false, click = false;
         int x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
-        int click = 0, wait = 0, lock = 0, select = 0;
+        int wait = 0, lock = 0, select = 0;
+        int cx = 0, cy = 0, dx = 0, dy = 0;
         int map[MAP_X][MAP_Y];
         load_canvas(map);
 
@@ -213,11 +213,13 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    if(m_range(mstate, 0, 1920, 0, 1000)) {
+                    if(drag) {
+                        click = true;
+                    } else if(mtrx_range(mstate.x, mstate.y, 0, 1920, 0, 1000)) {
                         if(lock == 1) {
                             lock_coords(&lock, &lx, &ly, mstate);
                         }
-                        click = 1;
+                        click = true;
                     } else {
                         btn_click(cbtnlist[0], event.mouse, &ccbtnlist[0]);
                         for(int i = 1; i < length(cbtnlist); i++) {
@@ -230,9 +232,17 @@ int main(void) {
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     click = 0;
                     break;
+                case ALLEGRO_EVENT_MOUSE_AXES:
+                    if(drag && click) {
+                        cx = r_lim(-MAP_X + VIEW_X + 1 , cx + (event.mouse.x / 20 - dx), 0);
+                        cy = r_lim(-MAP_Y + VIEW_Y + 1, cy + (event.mouse.y / 20 - dy), 0);
+                    }
+                    dx = event.mouse.x / 20;
+                    dy = event.mouse.y / 20;
+                    break;
                 case ALLEGRO_EVENT_KEY_DOWN:
                     if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
-                        done = true;
+                        drag = true;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
                         select = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
@@ -248,6 +258,8 @@ int main(void) {
                         lock = 0;
                         dirx = 0;
                         diry = 0;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
+                        drag = false;
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -260,9 +272,9 @@ int main(void) {
                 break;
             }
 
-            if(click) {
-                x = r_lim(0, mstate.x / 20, MAP_X - 1);
-                y = r_lim(0, mstate.y / 20, MAP_Y - 1);
+            if(click && !drag) {
+                x = mstate.x / 20 - cx;
+                y = mstate.y / 20 - cy;
                 
                 lock_handler(&lock, lx, ly, &x, &y, &dirx, &diry);
 
@@ -274,13 +286,15 @@ int main(void) {
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(bgcolor);
             
-                draw_map(grid, map, font);
+                draw_map(grid, map, cx, cy, font);
+
+                al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
                 for (int i = 0; i < length(cbtnlist); i++) {
                     btn_draw(cbtnlist[i], font, &ccbtnlist[i]);
                 }
                 
-                text_select(select, font);
+                toolbar_text(select, cx, cy, font);
 
                 al_draw_filled_rectangle(475, 1010, 485, 1070, red);
                 al_draw_filled_rectangle(1435, 1010, 1445, 1070, red);

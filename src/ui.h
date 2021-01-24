@@ -18,6 +18,6 @@ void btn_draw(button btn, ALLEGRO_FONT *font, int *time);
 
 bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time);
 
-void text_select(int select, ALLEGRO_FONT *font);
+void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font);
 
 #endif 
