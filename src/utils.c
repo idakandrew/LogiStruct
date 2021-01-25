@@ -25,7 +25,5 @@ void load_canvas(int map[MAP_X][MAP_Y]) {
     if(fp != NULL) {
         fread(map, sizeof(int)*MAP_X*MAP_Y, 1, fp);
         fclose(fp);
-    } else {
-        memset(map, 0, sizeof(int)*MAP_X*MAP_Y);
     }
 }

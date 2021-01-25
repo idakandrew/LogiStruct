@@ -15,8 +15,8 @@
 #define green al_map_rgb(0, 180, 80)
 #define blue al_map_rgb(0, 80, 180)
 
-#define MAP_X 300
-#define MAP_Y 300
+#define MAP_X 1000
+#define MAP_Y 1000
 #define VIEW_X 96
 #define VIEW_Y 50
 

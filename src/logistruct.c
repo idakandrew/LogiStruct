@@ -116,20 +116,20 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("../data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[7] = {
+        button sbtnlist[8] = {
             btn_build(250, 70, "Menu", "../data/new.png"), btn_build(250, 330, "L Mouse", "../data/new.png"), 
             btn_build(250, 470, "R Mouse", "../data/new.png"), btn_build(250, 610, "L Shift", "../data/new.png"), 
             btn_build(250, 750, "Tab", "../data/new.png"), btn_build(250, 890, "Esc", "../data/new.png"), 
-            btn_build(1200, 330, "Backspace", "../data/new.png")
+            btn_build(1200, 330, "Backspace", "../data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "../data/new.png")
         };
 
-        char const *textlist[6] = {
+        char const *textlist[7] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
-            "Toggle grid overlay.", "Deselect current object.", "Clear canvas."
+            "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", "Hold & drag to pan view."
         };
 
-        int xlist[6] = {490, 490, 490, 490, 490, 1440};
-        int ylist[6] = {330, 470, 610, 750, 890, 330};
+        int xlist[7] = {490, 490, 490, 490, 490, 1440, 1440};
+        int ylist[7] = {330, 470, 610, 750, 890, 330, 470};
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -186,8 +186,8 @@ int main(void) {
         bool grid = false, drag = false, click = false;
         int x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
         int wait = 0, lock = 0, select = 0;
-        int cx = 0, cy = 0, dx = 0, dy = 0;
-        int map[MAP_X][MAP_Y];
+        int cx = -500, cy = -500, dx = 0, dy = 0;
+        static int map[MAP_X][MAP_Y];
         load_canvas(map);
 
         ALLEGRO_FONT *font = al_load_ttf_font("../data/mont.otf", 26, 0);

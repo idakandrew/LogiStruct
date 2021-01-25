@@ -2,8 +2,8 @@
 #include "canvas.h"
 
 void *chip_sim(int map[MAP_X][MAP_Y]) {
-    for(int i = 0; i < 96; i++) {
-        for(int j = 0; j < 50; j++) {
+    for(int i = 0; i < MAP_X; i++) {
+        for(int j = 0; j < MAP_Y; j++) {
             if(map[i][j] == nand) {
                 if(map[i-3][j-1] != hipinin || map[i-3][j+1] != hipinin) {
                     map[i+3][j] = hipinout;
