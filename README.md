@@ -38,7 +38,7 @@ libwinpthread-1.dll
 - Middle click to select part on canvas.
 - Select and save canvas region as chip.
 - Redo UI to handle more chip types.
-- Increase canvas size & add zoom / pan features.
+- Zoom features
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
 
