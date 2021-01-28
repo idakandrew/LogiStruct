@@ -35,9 +35,9 @@ libstdc++-6.dll
 libwinpthread-1.dll
 ```
 ## TODO
-- Middle click to select part on canvas.
-- Select and save canvas region as chip.
-- Redo UI to handle more chip types.
+- Middle click to select part on canvas
+- Select and save canvas region as chip
+- Redo UI to handle more chip types
 - Zoom features
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
