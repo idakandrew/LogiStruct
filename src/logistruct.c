@@ -89,7 +89,7 @@ int main(void) {
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.2 (Jan 25, 2021)");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.2.1 (Feb 2, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < length(mbtnlist); i++) {
