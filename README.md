@@ -22,7 +22,7 @@ windres icon.rc -O coff -o icon.res
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data/icon.res -o ../Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
-6. Copy the following .dlls from your Allegro & MinGW install to the LogiStruct install if .dlls are missing (optional):
+6. If .dlls are missing, copy the following .dlls from your Allegro & MinGW install to the LogiStruct install (optional):
 ```
 allegro_font-5.2.dll
 allegro_image-5.2.dll
