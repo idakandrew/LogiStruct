@@ -14,16 +14,15 @@ Github releases: https://github.com/idakandrew/LogiStruct/releases
 1. Download and install Allegro version 5.2.6.0 from https://github.com/liballeg/allegro5/releases. 
 2. Ensure that Allegro library files are on your include path. 
 3. Clone this repository locally. 
-4. Create /bin/ in /Logistruct/.
-5. Navigate to /data/ & compile the icon using:
+4. Navigate to /data/ & compile the icon using:
 ```
 windres icon.rc -O coff -o icon.res
 ```
-6. Navigate to /src/ & compile via GCC using: 
+5. Navigate to /src/ & compile via GCC using: 
 ```
 gcc logistruct.c canvas.c canvas.h sim.c sim.h ui.c ui.h utils.c utils.h ../data/icon.res -o ../bin/Logistruct -lallegro -lallegro_font -lallegro_ttf -lallegro_primitives -lallegro_image -mwindows -lm
 ```
-7. Copy the following .dlls from your Allegro & MinGW install to /bin/ (optional):
+6. Copy the following .dlls from your Allegro & MinGW install to the LogiStruct install if .dlls are missing (optional):
 ```
 allegro_font-5.2.dll
 allegro_image-5.2.dll
