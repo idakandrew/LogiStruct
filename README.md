@@ -3,7 +3,7 @@
 ## Overview
 LogiStruct is an in-development logic simulator designed around a pixel canvas system. It is written entirely in C, and relies on the Allegro 5 library for graphical and input features. Screenshots below.
 ## Version
-Latest: v0.2 (Jan 25, 2021)
+Latest: 0.2 (Jan 25, 2021)
 ## Installation
 ### Compiled Downloads
 Itch.io page: https://aleainfinitus.itch.io/logistruct
