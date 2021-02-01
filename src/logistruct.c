@@ -44,17 +44,17 @@ int main(void) {
     start:
 
     if(curr == menu) {
-        ALLEGRO_FONT *font = al_load_ttf_font("../data/mont.otf", 32, 0);
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
 
         int mcbtnlist[3] = {0, 0, 0};
 
         button mbtnlist[3] = {
-            btn_build(960, 500, "Canvas", "../data/new.png"), btn_build(960, 650, "Controls", "../data/new.png"),
-            btn_build(960, 800, "Exit", "../data/new.png")
+            btn_build(960, 500, "Canvas", "data/new.png"), btn_build(960, 650, "Controls", "data/new.png"),
+            btn_build(960, 800, "Exit", "data/new.png")
         };
         
-        ALLEGRO_BITMAP *logo = al_load_bitmap("../data/logo.png");
-        ALLEGRO_BITMAP *bg = al_load_bitmap("../data/bg.png");
+        ALLEGRO_BITMAP *logo = al_load_bitmap("data/logo.png");
+        ALLEGRO_BITMAP *bg = al_load_bitmap("data/bg.png");
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -89,7 +89,7 @@ int main(void) {
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.1 (Jan 19, 2021)");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.2 (Jan 25, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < length(mbtnlist); i++) {
@@ -113,14 +113,14 @@ int main(void) {
     } else if(curr == settings) {
         int scbtn0 = 0, ignore = 0;
 
-        ALLEGRO_FONT *font = al_load_ttf_font("../data/mont.otf", 32, 0);
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
         button sbtnlist[8] = {
-            btn_build(250, 70, "Menu", "../data/new.png"), btn_build(250, 330, "L Mouse", "../data/new.png"), 
-            btn_build(250, 470, "R Mouse", "../data/new.png"), btn_build(250, 610, "L Shift", "../data/new.png"), 
-            btn_build(250, 750, "Tab", "../data/new.png"), btn_build(250, 890, "Esc", "../data/new.png"), 
-            btn_build(1200, 330, "Backspace", "../data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "../data/new.png")
+            btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "L Mouse", "data/new.png"), 
+            btn_build(250, 470, "R Mouse", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
+            btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
+            btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png")
         };
 
         char const *textlist[7] = {
@@ -190,14 +190,14 @@ int main(void) {
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
 
-        ALLEGRO_FONT *font = al_load_ttf_font("../data/mont.otf", 26, 0);
+        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 26, 0);
 
         int ccbtnlist[6] = {0, 0, 0, 0, 0, 0};
 
         button cbtnlist[6] = {
-            btn_build(1680, 1040, "Menu", "../data/select.png"), btn_build(660, 1040, "NAND", "../data/select.png"), 
-            btn_build(810, 1040, "NOR", "../data/select.png"), btn_build(960, 1040, "Switch", "../data/select.png"), 
-            btn_build(1110, 1040, "Light", "../data/select.png"), btn_build(1260, 1040, "Crossing", "../data/select.png"), 
+            btn_build(1680, 1040, "Menu", "data/select.png"), btn_build(660, 1040, "NAND", "data/select.png"), 
+            btn_build(810, 1040, "NOR", "data/select.png"), btn_build(960, 1040, "Switch", "data/select.png"), 
+            btn_build(1110, 1040, "Light", "data/select.png"), btn_build(1260, 1040, "Crossing", "data/select.png"), 
         };
 
         while(1) {
