@@ -35,7 +35,7 @@ libstdc++-6.dll
 libwinpthread-1.dll
 ```
 ## TODO
-- Middle click to select part on canvas
+- Part picker tool
 - Select and save canvas region as chip
 - Redo UI to handle more chip types
 - Zoom features
