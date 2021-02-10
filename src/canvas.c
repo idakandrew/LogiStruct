@@ -16,8 +16,8 @@ int r_lim(int min, int val, int max) {
     else {return val;}
 } 
 
-// figure out how to only draw visible area, possibly multithread
-void draw_map(bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
+// multithread?
+void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
     ALLEGRO_COLOR colormap[18] = {
         bgcolor, mediumgrey, red, black, redblack, black, redblack, green,
         blue, green, blue, lightgrey, white, black, redblack, gold
@@ -25,18 +25,24 @@ void draw_map(bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *fo
     int xs[200];
     int ys[200];
     int saved = 0;
-    int absx = abs(cx);
-    int absy = abs(cy);
+    int vxzm = VIEW_X - VIEW_X / zm, vyzm = VIEW_Y - VIEW_Y / zm;
 
-    for(int i = absx; i < absx + VIEW_X; i++) {
-        for(int j = absy; j < absy + VIEW_Y; j++) {
-            if(grid) {
-                al_draw_line((i-absx)*20, (j-absy)*20, (i-absx)*20+20, (j-absy)*20, nearblack, 1);
-                al_draw_line((i-absx)*20, (j-absy)*20, (i-absx)*20, (j-absy)*20+20, nearblack, 1);
+    for(int i = cx - vxzm; i < cx + VIEW_X + vxzm; i++) {
+        if(grid) {
+            al_draw_line((i-cx + vxzm)*20/zm, 0, (i-cx + vxzm)*20/zm, 1000, nearblack, 1);
+        }
+
+        for(int j = cy - vyzm; j < cy + VIEW_Y + vyzm; j++) {
+            if(grid && i == cx + VIEW_X + vxzm - 1) {
+                al_draw_line(0, (j-cy + vyzm)*20/zm, 1920, (j-cy + vyzm)*20/zm, nearblack, 1);
             }
 
             if(map[i][j] != empty) {
-                al_draw_filled_rectangle((i+cx)*20, (j+cy)*20, (i+cx)*20+20, (j+cy)*20+20, colormap[map[i][j]]);
+                if(zm == 2) {
+                    al_draw_filled_rectangle((i-cx + vxzm)*10, (j-cy + vyzm)*10, (i-cx + vxzm)*10+10, (j-cy + vyzm)*10+10, colormap[map[i][j]]);
+                } else {
+                    al_draw_filled_rectangle((i-cx)*20, (j-cy)*20, (i-cx)*20+20, (j-cy)*20+20, colormap[map[i][j]]);
+                }
                 if(map[i][j] == nand || map[i][j] == nor) {
                     xs[saved] = i, ys[saved] = j, saved++;
                 }
@@ -45,11 +51,13 @@ void draw_map(bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *fo
     }
 
     for(int i = 0; i < saved; i++) {
-        if(mtrx_range(xs[i], ys[i], absx, absx + VIEW_X, absy, absy + VIEW_Y)) {
+        if(mtrx_range(xs[i], ys[i], cx - vxzm, cx + VIEW_X + vxzm, cy - vyzm, cy + VIEW_Y + vxzm)) {
             if(map[xs[i]][ys[i]] == nand) {
-                al_draw_text(font, white, (xs[i] - absx)*20+10, (ys[i] - absy)*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NAND");
+                al_draw_text(font, white, (xs[i] - cx + vxzm)*20/zm+10/zm, 
+                    (ys[i] - cy + vyzm)*20/zm+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NAND");
             } else if(map[xs[i]][ys[i]] == nor) {
-                al_draw_text(font, white, (xs[i] - absx)*20+10, (ys[i] - absy)*20+9 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOR");
+                al_draw_text(font, white, (xs[i] - cx + vxzm)*20/zm+10/zm, 
+                    (ys[i] - cy + vyzm)*20/zm+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOR");
             }
         }
     }
@@ -172,22 +180,21 @@ int flip_switch(int map[MAP_X][MAP_Y], int x, int y, int mode) {
     return 0;
 }
 
-void lock_coords(int *lock, int *lx, int *ly, ALLEGRO_MOUSE_STATE state) {
-    *lock = 2;
-    *lx = state.x / 20; 
-    *ly = state.y / 20;
-}
+void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly) {
+    int testx = 0, testy = 0;
 
-void lock_handler(int *lock, int lx, int ly, int *x, int *y, int *dirx, int *diry) {
-    if(*lock == 2) {
-        *dirx = abs(lx - *x);
-        *diry = abs(ly - *y);
-        *lock -= *dirx;
-        *lock -= *diry;
-    }
-    if(*dirx == 1) {
+    if(*lock == 0) {
+        testx = abs(*x - lx);
+        testy = abs(*y - ly);
+        
+        if(testx == 1) {
+            *lock = 1;
+        } else if(testy == 1) {
+            *lock = 2;
+        }
+    } else if(*lock == 1) {
         *y = ly;
-    } else if(*diry == 1) {
+    } else if(*lock == 2) {
         *x = lx;
     }
 }

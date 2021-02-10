@@ -116,20 +116,22 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[8] = {
+        button sbtnlist[9] = {
             btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "L Mouse", "data/new.png"), 
             btn_build(250, 470, "R Mouse", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
             btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
-            btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png")
+            btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),
+            btn_build(1200, 610, "Mouse Wheel", "data/new.png")
         };
 
-        char const *textlist[7] = {
+        char const *textlist[8] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
-            "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", "Hold & drag to pan view."
+            "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
+            "Hold & drag to pan view.", "Toggle zoom level."
         };
 
-        int xlist[7] = {490, 490, 490, 490, 490, 1440, 1440};
-        int ylist[7] = {330, 470, 610, 750, 890, 330, 470};
+        int xlist[8] = {490, 490, 490, 490, 490, 1440, 1440, 1440};
+        int ylist[8] = {330, 470, 610, 750, 890, 330, 470, 610};
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -183,14 +185,16 @@ int main(void) {
         goto start;
 
     } else if (curr == canvas) {
-        bool grid = false, drag = false, click = false;
-        int x = 0, y = 0, lx = 0, ly = 0, dirx = 0, diry = 0;
-        int wait = 0, lock = 0, select = 0;
-        int cx = -500, cy = -500, dx = 0, dy = 0;
+        bool grid = false, pan = false, click = false;
+        int wait = 0, lock = -1, select = 0;
+        int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
+        int cx = 500, cy = 500;
+        int zm = 1, prevz = 0;
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
 
-        ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 26, 0);
+        ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
+        ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
 
         int ccbtnlist[6] = {0, 0, 0, 0, 0, 0};
 
@@ -213,12 +217,7 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    if(drag) {
-                        click = true;
-                    } else if(mtrx_range(mstate.x, mstate.y, 0, 1920, 0, 1000)) {
-                        if(lock == 1) {
-                            lock_coords(&lock, &lx, &ly, mstate);
-                        }
+                    if(mtrx_range(mstate.x, mstate.y, 0, 1920, 0, 1000)) {
                         click = true;
                     } else {
                         btn_click(cbtnlist[0], event.mouse, &ccbtnlist[0]);
@@ -231,22 +230,29 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     click = 0;
+                    lock = 0;
                     break;
                 case ALLEGRO_EVENT_MOUSE_AXES:
-                    if(drag && click) {
-                        cx = r_lim(-MAP_X + VIEW_X + 1 , cx + (event.mouse.x / 20 - dx), 0);
-                        cy = r_lim(-MAP_Y + VIEW_Y + 1, cy + (event.mouse.y / 20 - dy), 0);
+                    if(event.mouse.z > prevz) {
+                        zm = 1;
+                    } else if(event.mouse.z < prevz) {
+                        zm = 2;
                     }
-                    dx = event.mouse.x / 20;
-                    dy = event.mouse.y / 20;
+                    if(pan && click || event.mouse.z != prevz) {
+                        cx = r_lim(0 + VIEW_X - VIEW_X / zm, cx - (event.mouse.x / (20 / zm) - prevx / (20 / zm)), MAP_X - 2 * VIEW_X - 1 + VIEW_X / zm);
+                        cy = r_lim(0 + VIEW_Y - VIEW_Y / zm, cy - (event.mouse.y / (20 / zm) - prevy / (20 / zm)), MAP_Y - 2 * VIEW_Y - 1 + VIEW_Y / zm);
+                    }
+                    prevx = event.mouse.x;
+                    prevy = event.mouse.y;
+                    prevz = event.mouse.z;
                     break;
                 case ALLEGRO_EVENT_KEY_DOWN:
                     if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
-                        drag = true;
+                        pan = true;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
                         select = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
-                        lock_coords(&lock, &lx, &ly, mstate);
+                        lock = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_TAB) {
                         grid = !grid;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) {
@@ -255,11 +261,9 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_KEY_UP:
                     if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
-                        lock = 0;
-                        dirx = 0;
-                        diry = 0;
+                        lock = -1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
-                        drag = false;
+                        pan = false;
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -268,33 +272,36 @@ int main(void) {
             }
 
             if(done || ccbtnlist[0] == 1) {
-                curr = menu;
+                curr = menu;    
                 break;
             }
 
-            if(click && !drag) {
-                x = mstate.x / 20 - cx;
-                y = mstate.y / 20 - cy;
-                
-                lock_handler(&lock, lx, ly, &x, &y, &dirx, &diry);
+            if(click && !pan) {
+                x = mstate.x / (20 / zm) + cx - (VIEW_X - VIEW_X / zm);
+                y = mstate.y / (20 / zm) + cy - (VIEW_Y - VIEW_Y / zm);
+
+                lock_axis(zm, &lock, &x, &y, lx, ly);
 
                 wait = r_lim(0, wait, 20);
 
                 click_handler(map, mstate, x, y, select, &wait);
+
+                lx = x;
+                ly = y;
             }
 
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(bgcolor);
             
-                draw_map(grid, map, cx, cy, font);
+                draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : fontsml);
 
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
                 for (int i = 0; i < length(cbtnlist); i++) {
-                    btn_draw(cbtnlist[i], font, &ccbtnlist[i]);
+                    btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i]);
                 }
                 
-                toolbar_text(select, cx, cy, font);
+                toolbar_text(select, cx, cy, fontlrg);
 
                 al_draw_filled_rectangle(475, 1010, 485, 1070, red);
                 al_draw_filled_rectangle(1435, 1010, 1445, 1070, red);
@@ -306,7 +313,8 @@ int main(void) {
 
         save_canvas(map);
 
-        al_destroy_font(font);
+        al_destroy_font(fontlrg);
+        al_destroy_font(fontsml);
         for(int i = 0; i < length(cbtnlist); i++) {
             al_destroy_bitmap(cbtnlist[i].bit);
         }

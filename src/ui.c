@@ -43,11 +43,11 @@ bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time) {
 }
 
 void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font) {
-    al_draw_textf(font, white, 240, 1055 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Coordinates: (%d : %d)", abs(cx), MAP_Y - abs(cy));
+    al_draw_textf(font, white, 240, 1055 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Coordinates: (%d : %d)", cx, MAP_Y - cy);
     
     if(select == 0) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Wire");}
-    else if(select == 1) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: AND");}
-    else if(select == 2) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: NOT");}
+    else if(select == 1) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: NAND");}
+    else if(select == 2) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: NOR");}
     else if(select == 3) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Switch");}
     else if(select == 4) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Light");}
     else if(select == 5) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Crossing");}

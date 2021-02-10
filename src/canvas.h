@@ -30,7 +30,7 @@ bool mtrx_range(int x, int y, int xmin, int xmax, int ymin, int ymax);
 
 int r_lim(int min, int val, int max);
 
-void draw_map(bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font);
+void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font);
 
 void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]);
 
@@ -38,9 +38,7 @@ void remove_chip(int map[MAP_X][MAP_Y], int x, int y);
 
 int flip_switch(int map[MAP_X][MAP_Y], int x, int y, int mode);
 
-void lock_coords(int *lock, int *lx, int *ly, ALLEGRO_MOUSE_STATE state);
-
-void lock_handler(int *lock, int lx, int ly, int *x, int *y, int *dirx, int *diry);
+void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly);
 
 void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait);
 
