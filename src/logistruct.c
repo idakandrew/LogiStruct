@@ -188,8 +188,9 @@ int main(void) {
         bool grid = false, pan = false, click = false;
         int wait = 0, lock = -1, select = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
-        int cx = 500, cy = 500;
+        int cx = 500, cy = 499;
         int zm = 1, prevz = 0;
+        al_set_mouse_z(0);
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
 
@@ -230,7 +231,9 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     click = 0;
-                    lock = 0;
+                    if(lock > -1) {
+                        lock = 0;
+                    }
                     break;
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     if(event.mouse.z > prevz) {
@@ -300,7 +303,7 @@ int main(void) {
                 for (int i = 0; i < length(cbtnlist); i++) {
                     btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i]);
                 }
-                
+
                 toolbar_text(select, cx, cy, fontlrg);
 
                 al_draw_filled_rectangle(475, 1010, 485, 1070, red);
