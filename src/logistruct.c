@@ -7,7 +7,7 @@
 #include "sim.h"
 #include "ui.h"
 
-#define length(v) (sizeof(v) / sizeof(*v))
+#define len(v) sizeof v / sizeof *v
 
 int main(void) {
     fix_dir();
@@ -64,7 +64,7 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    for(int i = 0; i < length(mbtnlist); i++) {
+                    for(int i = 0; i < len(mbtnlist); i++) {
                         btn_click(mbtnlist[i], event.mouse, &mcbtnlist[i]);
                     }
                     break;
@@ -92,7 +92,7 @@ int main(void) {
                 al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.2.1 (Feb 2, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
-                for(int i = 0; i < length(mbtnlist); i++) {
+                for(int i = 0; i < len(mbtnlist); i++) {
                     btn_draw(mbtnlist[i], font, &mcbtnlist[i]);
                 }
 
@@ -102,7 +102,7 @@ int main(void) {
         }
 
         al_destroy_bitmap(logo);
-        for(int i = 0; i < length(mbtnlist); i++) {
+        for(int i = 0; i < len(mbtnlist); i++) {
             al_destroy_bitmap(mbtnlist[i].bit);
         }
         al_destroy_font(font);
@@ -163,11 +163,11 @@ int main(void) {
                 al_draw_filled_rectangle(20, 240, 950, 980, nearblack);
                 al_draw_filled_rectangle(970, 240, 1900, 980, nearblack);
 
-                for (int i = 0; i < length(sbtnlist); i++) {
+                for (int i = 0; i < len(sbtnlist); i++) {
                     btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
                 }
 
-                for(int i = 0; i < length(textlist); i++) {
+                for(int i = 0; i < len(textlist); i++) {
                     al_draw_text(font, white, xlist[i], ylist[i] - halfline, 0, textlist[i]);
                 }
 
@@ -176,7 +176,7 @@ int main(void) {
             }
         }
 
-        for(int i = 0; i < length(sbtnlist); i++) {
+        for(int i = 0; i < len(sbtnlist); i++) {
             al_destroy_bitmap(sbtnlist[i].bit);
         }
         al_destroy_font(font);
@@ -186,10 +186,11 @@ int main(void) {
 
     } else if (curr == canvas) {
         bool grid = false, pan = false, click = false;
-        int wait = 0, lock = -1, select = 0;
+        int wait = 0, lock = -1, select = -1, option = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
         int cx = 500, cy = 499;
         int zm = 1, prevz = 0;
+        int page = 0;
         al_set_mouse_z(0);
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
@@ -197,12 +198,18 @@ int main(void) {
         ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
         ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
 
-        int ccbtnlist[6] = {0, 0, 0, 0, 0, 0};
+        int ccbtnlist[5] = {0, 0, 0, 0, 0};
+        int nopgclk[3] = {0, 0, 0};
 
-        button cbtnlist[6] = {
-            btn_build(1680, 1040, "Menu", "data/select.png"), btn_build(660, 1040, "NAND", "data/select.png"), 
-            btn_build(810, 1040, "NOR", "data/select.png"), btn_build(960, 1040, "Switch", "data/select.png"), 
-            btn_build(1110, 1040, "Light", "data/select.png"), btn_build(1260, 1040, "Crossing", "data/select.png"), 
+        button cbtnlist[5] = {
+            btn_build(660, 1040, "NAND", "data/select.png"), btn_build(810, 1040, "NOR", "data/select.png"), 
+            btn_build(960, 1040, "Switch", "data/select.png"), btn_build(1110, 1040, "Light", "data/select.png"), 
+            btn_build(1260, 1040, "Crossing", "data/select.png")
+        };
+
+        button nopglst[3] = {
+            btn_build(1680, 1040, "Menu", "data/select.png"), btn_build(525, 1040, "<", "data/next.png"), 
+            btn_build(1395, 1040, ">", "data/next.png")
         };
 
         while(1) {
@@ -221,11 +228,22 @@ int main(void) {
                     if(mtrx_range(mstate.x, mstate.y, 0, 1920, 0, 1000)) {
                         click = true;
                     } else {
-                        btn_click(cbtnlist[0], event.mouse, &ccbtnlist[0]);
-                        for(int i = 1; i < length(cbtnlist); i++) {
-                            if(btn_click(cbtnlist[i], event.mouse, &ccbtnlist[i])) {
-                                select = (select == i) ? 0 : i;
+                        for(int i = 0 + 5 * page; i < 5 + 5 * page; i++) {
+                            if(i < len(cbtnlist)) {
+                                if(btn_click(cbtnlist[i], event.mouse, &ccbtnlist[i])) {
+                                    select = i;
+                                }
                             }
+                        }
+                        for(int i = 0; i < len(nopglst); i++) {
+                            if(btn_click(nopglst[i], event.mouse, &nopgclk[i])) {
+                                option = i;
+                            }
+                        }
+                        if(option == 1) {
+                            page = r_lim(0, --page, 1);
+                        } else if(option == 2) {
+                            page = r_lim(0, ++page, 1);
                         }
                     }
                     break;
@@ -253,7 +271,7 @@ int main(void) {
                     if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
                         pan = true;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
-                        select = 0;
+                        select = -1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
                         lock = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_TAB) {
@@ -274,7 +292,7 @@ int main(void) {
                     break;
             }
 
-            if(done || ccbtnlist[0] == 1) {
+            if(done || nopgclk[0] == 1) {
                 curr = menu;    
                 break;
             }
@@ -300,8 +318,13 @@ int main(void) {
 
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
-                for (int i = 0; i < length(cbtnlist); i++) {
-                    btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i]);
+                for(int i = 0 + 5 * page; i < 5 + 5 * page; i++) {
+                    if(i < len(cbtnlist)) {
+                        btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i]);
+                    }
+                }
+                for(int i = 0; i < len(nopglst); i++) {
+                    btn_draw(nopglst[i], fontlrg, &nopgclk[i]);
                 }
 
                 toolbar_text(select, cx, cy, fontlrg);
@@ -318,8 +341,11 @@ int main(void) {
 
         al_destroy_font(fontlrg);
         al_destroy_font(fontsml);
-        for(int i = 0; i < length(cbtnlist); i++) {
+        for(int i = 0; i < len(cbtnlist); i++) {
             al_destroy_bitmap(cbtnlist[i].bit);
+        }
+        for(int i = 0; i < len(nopglst); i++) {
+            al_destroy_bitmap(nopglst[i].bit);
         }
         al_flush_event_queue(queue);
 

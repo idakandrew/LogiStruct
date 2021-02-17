@@ -201,13 +201,13 @@ void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly) {
 
 void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait) {
     if(mtrx_range(state.x, state.y, 0, 1920, 0, 1000)) {
-        if(*wait == 0 && select == 0 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
+        if(*wait == 0 && select == -1 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
         else if(map[x][y] > hipinout && state.buttons & 2) {remove_chip(map, x, y);}
-        else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map);}
-        else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map);}
-        else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map);}
-        else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map);}
-        else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map);}
+        else if(select == 0 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map);}
+        else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map);}
+        else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map);}
+        else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map);}
+        else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map);}
         else if(state.buttons & 2 && map[x][y] < lopinin) {map[x][y] = empty;}
         else if(state.buttons & 1 && map[x][y] == empty) {map[x][y] = lowire;}
     }
