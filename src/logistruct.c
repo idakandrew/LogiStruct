@@ -316,6 +316,8 @@ int main(void) {
             
                 draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : fontsml);
 
+                draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : fontsml, zm);
+
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
                 for(int i = 0 + 5 * page; i < 5 + 5 * page; i++) {

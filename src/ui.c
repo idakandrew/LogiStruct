@@ -52,3 +52,19 @@ void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font) {
     else if(select == 3) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Light");}
     else if(select == 4) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Crossing");}
 }
+
+void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, int zm) {
+    int fact = 20 / zm;
+    int adjx = x / fact * fact, adjy = y / fact * fact;
+
+    if((select == 0 || select == 1) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
+        al_draw_rectangle(adjx - 60 / zm, adjy - 20 / zm, adjx + 80 / zm, adjy + 40 / zm, white, 2);
+        al_draw_text(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
+    } else if((select == 2 || select == 3) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
+        al_draw_rectangle(adjx - 20 / zm, adjy - 20 / zm, adjx + 40 / zm, adjy + 40 / zm, white, 2);
+        al_draw_text(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
+    } else if((select == 4) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
+        al_draw_rectangle(adjx, adjy, adjx + 20 / zm, adjy + 20 / zm, white, 2);
+        al_draw_text(font, white, adjx + fact / 2, adjy - 12 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
+    }
+}
