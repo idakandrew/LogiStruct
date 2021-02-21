@@ -41,6 +41,6 @@ libwinpthread-1.dll
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
 
-![screen](https://github.com/idakandrew/logistruct/blob/main/media/count.png?raw=true)
+![count](https://github.com/idakandrew/logistruct/blob/main/media/count.png?raw=true)
 
 ![screen2](https://github.com/idakandrew/logistruct/blob/main/media/screenshot2.png?raw=true)
