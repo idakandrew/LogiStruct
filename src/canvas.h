@@ -4,7 +4,7 @@
 #include <allegro5/allegro_font.h>
 
 #define white al_map_rgb(200, 200, 200)
-#define lightgrey al_map_rgb(100, 100, 100)
+#define lightgrey al_map_rgb(85, 85, 85)
 #define mediumgrey al_map_rgb(30, 30, 30)
 #define bgcolor al_map_rgb(45, 45, 45)
 #define nearblack al_map_rgb(15, 15, 15)
@@ -14,6 +14,7 @@
 #define gold al_map_rgb(150, 150, 0)
 #define green al_map_rgb(0, 180, 80)
 #define blue al_map_rgb(0, 80, 180)
+#define purp al_map_rgb(50, 25, 110)
 
 #define MAP_X 1000
 #define MAP_Y 1000
@@ -22,7 +23,7 @@
 
 typedef enum component {
     empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, oboard, 
-    nand, nor, lolight, hilight, loflip, hiflip, cross
+    nand, nor, lolight, hilight, loflip, hiflip, cross, lobridge, hibridge, seg, segboard
 } comp;
 
 
@@ -40,6 +41,6 @@ int flip_switch(int map[MAP_X][MAP_Y], int x, int y, int mode);
 
 void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly);
 
-void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait);
+void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait, bool pen);
 
 #endif

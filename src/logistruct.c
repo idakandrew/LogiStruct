@@ -89,7 +89,7 @@ int main(void) {
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.2.1 (Feb 2, 2021)");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.3 (Feb 22, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < len(mbtnlist); i++) {
@@ -185,7 +185,7 @@ int main(void) {
         goto start;
 
     } else if (curr == canvas) {
-        bool grid = false, pan = false, click = false;
+        bool grid = false, pan = false, click = false, pen = true;
         int wait = 0, lock = -1, select = -1, option = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
         int cx = 500, cy = 499;
@@ -198,18 +198,19 @@ int main(void) {
         ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
         ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
 
-        int ccbtnlist[5] = {0, 0, 0, 0, 0};
-        int nopgclk[3] = {0, 0, 0};
+        int ccbtnlist[7] = {0, 0, 0, 0, 0, 0, 0};
+        int nopgclk[4] = {0, 0, 0, 0};
 
-        button cbtnlist[5] = {
+        button cbtnlist[7] = {
             btn_build(660, 1040, "NAND", "data/select.png"), btn_build(810, 1040, "NOR", "data/select.png"), 
             btn_build(960, 1040, "Switch", "data/select.png"), btn_build(1110, 1040, "Light", "data/select.png"), 
-            btn_build(1260, 1040, "Crossing", "data/select.png")
+            btn_build(1260, 1040, "Crossing", "data/select.png"), btn_build(660, 1040, "Bridge", "data/select.png"),
+            btn_build(810, 1040, "8-Seg", "data/select.png")
         };
 
-        button nopglst[3] = {
-            btn_build(1680, 1040, "Menu", "data/select.png"), btn_build(525, 1040, "<", "data/next.png"), 
-            btn_build(1395, 1040, ">", "data/next.png")
+        button nopglst[4] = {
+            btn_build(1840, 1040, "Menu", "data/select.png"), btn_build(550, 1040, "<", "data/next.png"), 
+            btn_build(1370, 1040, ">", "data/next.png"), btn_build(1690, 1040, " ", "data/select.png")
         };
 
         while(1) {
@@ -240,10 +241,16 @@ int main(void) {
                                 option = i;
                             }
                         }
-                        if(option == 1) {
-                            page = r_lim(0, --page, 1);
-                        } else if(option == 2) {
-                            page = r_lim(0, ++page, 1);
+                        switch(option) {
+                            case 1:
+                                page = r_lim(0, --page, 1);
+                                break;
+                            case 2:
+                                page = r_lim(0, ++page, 1);
+                                break;
+                            case 3:
+                                pen = !pen;
+                                break;
                         }
                     }
                     break;
@@ -305,7 +312,7 @@ int main(void) {
 
                 wait = r_lim(0, wait, 20);
 
-                click_handler(map, mstate, x, y, select, &wait);
+                click_handler(map, mstate, x, y, select, &wait, pen);
 
                 lx = x;
                 ly = y;
@@ -328,11 +335,8 @@ int main(void) {
                 for(int i = 0; i < len(nopglst); i++) {
                     btn_draw(nopglst[i], fontlrg, &nopgclk[i]);
                 }
-
-                toolbar_text(select, cx, cy, fontlrg);
-
-                al_draw_filled_rectangle(475, 1010, 485, 1070, red);
-                al_draw_filled_rectangle(1435, 1010, 1445, 1070, red);
+                
+                toolbar_text(select, cx, cy, fontlrg, pen);
                 
                 al_flip_display();
                 redraw = false;
