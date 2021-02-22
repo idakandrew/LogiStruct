@@ -36,8 +36,7 @@ libwinpthread-1.dll
 ## TODO
 - Part picker tool
 - Select and save canvas region as chip
-- Redo UI to handle more chip types
-- Zoom features
+- Part rotation
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.png?raw=true)
 
