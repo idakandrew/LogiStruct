@@ -39,7 +39,7 @@ libwinpthread-1.dll
 - Redo UI to handle more chip types
 - Zoom features
 ## Screenshots
-![menu](https://github.com/idakandrew/logistruct/blob/main/media/menuscreen.png?raw=true)
+![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.png?raw=true)
 
 ![adder](https://github.com/idakandrew/logistruct/blob/main/media/adder.png?raw=true)
 
