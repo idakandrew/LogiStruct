@@ -43,4 +43,4 @@ libwinpthread-1.dll
 
 ![screen2](https://github.com/idakandrew/logistruct/blob/main/media/screenshot2.png?raw=true)
 
-![screen](https://github.com/idakandrew/logistruct/blob/main/media/screenshot.png?raw=true)
+![screen1](https://github.com/idakandrew/logistruct/blob/main/media/screenshot.png?raw=true)
