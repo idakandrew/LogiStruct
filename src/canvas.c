@@ -18,13 +18,13 @@ int r_lim(int min, int val, int max) {
 
 // multithread?
 void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
-    ALLEGRO_COLOR colormap[20] = {
+    ALLEGRO_COLOR colormap[24] = {
         bgcolor, mediumgrey, red, black, redblack, black, redblack, green,
-        blue, green, blue, lightgrey, white, black, redblack, gold, green, 
-        blue, purp, purp
+        blue, green, blue, green, blue, lightgrey, white, black, redblack, gold, green, 
+        redblack, blue, redblack, purp, purp
     };
-    int xs[200];
-    int ys[200];
+    static int xs[1000];
+    static int ys[1000];
     int saved = 0;
     int vxzm = VIEW_X - VIEW_X / zm, vyzm = VIEW_Y - VIEW_Y / zm;
 
@@ -64,7 +64,7 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
     }
 }
 
-void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
+void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y], int rot) {
     if(chip == nand) {
         x = r_lim(3, x, MAP_X - 1 - 4);
         y = r_lim(1, y, MAP_Y - 1 - 1);
@@ -81,8 +81,9 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
             }
         }
         map[x][y] = nand;
-        map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
-        map[x + 3][y] = lopinout;
+        map[x + rot][y] = nandrot;
+        map[x - 3 * rot][y + 1] = map[x - 3 * rot][y - 1] = lopinin;
+        map[x + 3 * rot][y] = lopinout;
     } else if(chip == nor) {
         x = r_lim(3, x, MAP_X - 1 - 4);
         y = r_lim(1, y, MAP_Y - 1 - 1);
@@ -99,8 +100,9 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
             }
         }
         map[x][y] = nor;
-        map[x - 3][y + 1] = map[x - 3][y - 1] = lopinin;
-        map[x + 3][y] = lopinout;
+        map[x + rot][y] = norrot;
+        map[x - 3 * rot][y + 1] = map[x - 3 * rot][y - 1] = lopinin;
+        map[x + 3 * rot][y] = lopinout;
     } else if(chip == loflip) {
         x = r_lim(1, x, MAP_X - 1 - 2);
         y = r_lim(1, y, MAP_Y - 1 - 2);
@@ -142,7 +144,7 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
             }
         }
         map[x][y] = cross;
-    } else if(chip == lobridge) {
+    } else if(chip == lobridge1 || chip == lobridge2) {
         x = r_lim(0, x, MAP_X - 1);
         y = r_lim(0, y, MAP_Y - 1);
         for(int i = x - 1; i < x + 2; i++) {
@@ -152,7 +154,7 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y]) {
                 }
             }
         }
-        map[x][y] = lobridge;
+        map[x][y] = chip;
     } else if(chip == seg) {
         x = r_lim(3, x, MAP_X - 1 - 4);
         y = r_lim(7, y, MAP_Y - 1 - 8);
@@ -242,18 +244,19 @@ void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly) {
     }
 }
 
-void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait, bool pen) {
+void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait, bool pen, int rot) {
     if(mtrx_range(state.x, state.y, 0, 1920, 0, 1000)) {
         if(*wait == 0 && select == -1 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
         else if(pen) {
             if(map[x][y] > hipinout && state.buttons & 2) {remove_chip(map, x, y);}
-            else if(select == 0 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map);}
-            else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map);}
-            else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map);}
-            else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map);}
-            else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map);}
-            else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge, map);}
-            else if(select == 6 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, seg, map);}
+            else if(select == 0 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map, rot);}
+            else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map, rot);}
+            else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map, 0);}
+            else if(select == 3 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lolight, map, 0);}
+            else if(select == 4 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, cross, map, 0);}
+            else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge1, map, 0);}
+            else if(select == 6 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge2, map, 0);}
+            else if(select == 7 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, seg, map, 0);}
             else if(state.buttons & 2 && map[x][y] < lopinin) {map[x][y] = empty;}
             else if(state.buttons & 1 && map[x][y] == empty) {map[x][y] = lowire;}
         }

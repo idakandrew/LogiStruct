@@ -51,8 +51,9 @@ void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font, bool pen) {
     else if(select == 2) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Switch");}
     else if(select == 3) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Light");}
     else if(select == 4) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Crossing");}
-    else if(select == 5) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Bridge");}
-    else if(select == 6) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: 8-Seg");}
+    else if(select == 5) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Bridge G");}
+    else if(select == 6) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Bridge B");}
+    else if(select == 7) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: 8-Seg");}
 
     al_draw_textf(font, white, 1690, 1040 - al_get_font_line_height(font) / 2 - 4, ALLEGRO_ALIGN_CENTER, "Edit: %s", pen ? "On" : "Off");
 }
@@ -67,16 +68,16 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
     } else if((select == 2 || select == 3) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
         al_draw_rectangle(adjx - 20 / zm, adjy - 20 / zm, adjx + 40 / zm, adjy + 40 / zm, white, 2);
         al_draw_text(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
-    } else if((select == 4 || select == 5) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
+    } else if((select > 3 && select < 7) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
         al_draw_rectangle(adjx, adjy, adjx + 20 / zm, adjy + 20 / zm, white, 2);
-        if(select == 5) {
+        if(select == 5 || select == 6) {
             al_draw_line(adjx - 160 / zm, adjy, adjx - 160 / zm, adjy + 20 / zm, white, 2);
             al_draw_line(adjx + 180 / zm, adjy, adjx + 180 / zm, adjy + 20 / zm, white, 2);
             al_draw_line(adjx, adjy - 160 / zm, adjx + 20 / zm, adjy - 160 / zm, white, 2);
             al_draw_line(adjx, adjy + 180 / zm, adjx + 20 / zm, adjy + 180 / zm, white, 2);
         }
         al_draw_text(font, white, adjx + fact / 2, adjy - 12 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
-    } else if(select == 6) {
+    } else if(select == 7) {
         al_draw_rectangle(adjx - 60 / zm, adjy - 140 / zm, adjx + 80 / zm, adjy + 160 / zm, white, 2);
         al_draw_text(font, white, adjx + fact / 2, adjy - 144 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
     }

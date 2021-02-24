@@ -9,6 +9,18 @@
 
 #define len(v) sizeof v / sizeof *v
 
+int count(int map[MAP_X][MAP_Y]) {
+    int num = 0;
+    for(int i = 0; i < MAP_X; i++) {
+        for(int j = 0; j < MAP_Y; j++) {
+            if(map[i][j] == nand || map[i][j] == nor) {
+                num++;
+            }
+        }
+    }
+    return num;
+}
+
 int main(void) {
     fix_dir();
     al_init();
@@ -190,7 +202,7 @@ int main(void) {
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
         int cx = 500, cy = 499;
         int zm = 1, prevz = 0;
-        int page = 0;
+        int page = 0, rot = 1;
         al_set_mouse_z(0);
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
@@ -198,14 +210,14 @@ int main(void) {
         ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
         ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
 
-        int ccbtnlist[7] = {0, 0, 0, 0, 0, 0, 0};
+        int ccbtnlist[8] = {0, 0, 0, 0, 0, 0, 0};
         int nopgclk[4] = {0, 0, 0, 0};
 
-        button cbtnlist[7] = {
+        button cbtnlist[8] = {
             btn_build(660, 1040, "NAND", "data/select.png"), btn_build(810, 1040, "NOR", "data/select.png"), 
             btn_build(960, 1040, "Switch", "data/select.png"), btn_build(1110, 1040, "Light", "data/select.png"), 
-            btn_build(1260, 1040, "Crossing", "data/select.png"), btn_build(660, 1040, "Bridge", "data/select.png"),
-            btn_build(810, 1040, "8-Seg", "data/select.png")
+            btn_build(1260, 1040, "Crossing", "data/select.png"), btn_build(660, 1040, "Bridge G", "data/select.png"),
+            btn_build(810, 1040, "Bridge B", "data/select.png"), btn_build(960, 1040, "8-Seg", "data/select.png")
         };
 
         button nopglst[4] = {
@@ -252,6 +264,7 @@ int main(void) {
                                 pen = !pen;
                                 break;
                         }
+                        option = 0;
                     }
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
@@ -285,6 +298,8 @@ int main(void) {
                         grid = !grid;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) {
                         memset(map, empty, sizeof(map));
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_R) {
+                        rot = (rot == 1) ? -1 : 1;
                     }
                     break;
                 case ALLEGRO_EVENT_KEY_UP:
@@ -312,7 +327,7 @@ int main(void) {
 
                 wait = r_lim(0, wait, 20);
 
-                click_handler(map, mstate, x, y, select, &wait, pen);
+                click_handler(map, mstate, x, y, select, &wait, pen, rot);
 
                 lx = x;
                 ly = y;
@@ -335,6 +350,8 @@ int main(void) {
                 for(int i = 0; i < len(nopglst); i++) {
                     btn_draw(nopglst[i], fontlrg, &nopgclk[i]);
                 }
+
+                al_draw_textf(fontlrg, white, 100 ,100, 0, "%d", count(map));
                 
                 toolbar_text(select, cx, cy, fontlrg, pen);
                 
