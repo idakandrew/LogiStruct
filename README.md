@@ -35,7 +35,7 @@ libwinpthread-1.dll
 ```
 ## TODO
 - Part picker tool
-- Select and save canvas region as chip
+- Copy & paste (blueprints)
 - Resolution options
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.png?raw=true)
