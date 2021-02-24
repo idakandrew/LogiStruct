@@ -36,8 +36,7 @@ libwinpthread-1.dll
 ## TODO
 - Part picker tool
 - Select and save canvas region as chip
-- Part rotation
-- Undo color correction
+- Resolution options
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.png?raw=true)
 
