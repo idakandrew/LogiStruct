@@ -9,18 +9,6 @@
 
 #define len(v) sizeof v / sizeof *v
 
-int count(int map[MAP_X][MAP_Y]) {
-    int num = 0;
-    for(int i = 0; i < MAP_X; i++) {
-        for(int j = 0; j < MAP_Y; j++) {
-            if(map[i][j] == nand || map[i][j] == nor) {
-                num++;
-            }
-        }
-    }
-    return num;
-}
-
 int main(void) {
     fix_dir();
     al_init();
@@ -128,22 +116,22 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[9] = {
+        button sbtnlist[10] = {
             btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "L Mouse", "data/new.png"), 
             btn_build(250, 470, "R Mouse", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
             btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
             btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),
-            btn_build(1200, 610, "Mouse Wheel", "data/new.png")
+            btn_build(1200, 610, "Mouse Wheel", "data/new.png"), btn_build(1200, 750, "R", "data/new.png")
         };
 
-        char const *textlist[8] = {
+        char const *textlist[9] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
             "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
-            "Hold & drag to pan view.", "Toggle zoom level."
+            "Hold & drag to pan view.", "Toggle zoom level.", "Rotate gates horizontally."
         };
 
-        int xlist[8] = {490, 490, 490, 490, 490, 1440, 1440, 1440};
-        int ylist[8] = {330, 470, 610, 750, 890, 330, 470, 610};
+        int xlist[9] = {490, 490, 490, 490, 490, 1440, 1440, 1440, 1440};
+        int ylist[9] = {330, 470, 610, 750, 890, 330, 470, 610, 750};
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -338,7 +326,7 @@ int main(void) {
             
                 draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : fontsml);
 
-                draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : fontsml, zm);
+                draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : fontsml, zm, rot);
 
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
@@ -350,8 +338,6 @@ int main(void) {
                 for(int i = 0; i < len(nopglst); i++) {
                     btn_draw(nopglst[i], fontlrg, &nopgclk[i]);
                 }
-
-                al_draw_textf(fontlrg, white, 100 ,100, 0, "%d", count(map));
                 
                 toolbar_text(select, cx, cy, fontlrg, pen);
                 

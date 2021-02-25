@@ -20,6 +20,6 @@ bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time);
 
 void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font, bool pen);
 
-void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, int zm);
+void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, int zm, int rot);
 
 #endif 
