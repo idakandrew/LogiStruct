@@ -44,4 +44,6 @@ void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly);
 
 void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait, bool pen, int rot);
 
+int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy, int zm);
+
 #endif

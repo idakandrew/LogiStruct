@@ -147,8 +147,8 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y], int rot) {
     } else if(chip == lobridge1 || chip == lobridge2) {
         x = r_lim(0, x, MAP_X - 1);
         y = r_lim(0, y, MAP_Y - 1);
-        for(int i = x - 1; i < x + 2; i++) {
-            for(int j = y - 1; j < y + 2; j++) {
+        for(int i = x; i < x + 1; i++) {
+            for(int j = y; j < y + 1; j++) {
                 if(map[r_lim(0, i, MAP_X - 1)][r_lim(0, j, MAP_Y - 1)] > hiwire) {
                     goto trip;
                 }
@@ -194,7 +194,7 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y], int rot) {
 void remove_chip(int map[MAP_X][MAP_Y], int x, int y) {
     x = r_lim(0, x, MAP_X - 1);
     y = r_lim(0, y, MAP_Y - 1);
-    if(map[x][y] > hipinout) {
+    if(map[x][y] > hipinout && !(map[x][y] > cross && map[x][y] < seg)) {
         map[x][y] = empty;
         remove_chip(map, x+1, y);
         remove_chip(map, x-1, y);
@@ -244,11 +244,12 @@ void lock_axis(int zm, int *lock, int *x, int *y, int lx, int ly) {
     }
 }
 
+// maybe clean also?
 void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int y, int select, int *wait, bool pen, int rot) {
     if(mtrx_range(state.x, state.y, 0, 1920, 0, 1000)) {
         if(*wait == 0 && select == -1 && (map[x][y] == loflip || map[x][y] == hiflip) && state.buttons & 1) {*wait = flip_switch(map, x, y, 0);}
         else if(pen) {
-            if(map[x][y] > hipinout && state.buttons & 2) {remove_chip(map, x, y);}
+            if(map[x][y] > hipinout && !(map[x][y] > cross && map[x][y] < seg) && state.buttons & 2) {remove_chip(map, x, y);}
             else if(select == 0 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nand, map, rot);}
             else if(select == 1 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, nor, map, rot);}
             else if(select == 2 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, loflip, map, 0);}
@@ -257,8 +258,35 @@ void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int 
             else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge1, map, 0);}
             else if(select == 6 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge2, map, 0);}
             else if(select == 7 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, seg, map, 0);}
-            else if(state.buttons & 2 && map[x][y] < lopinin) {map[x][y] = empty;}
+            else if(state.buttons & 2 && (map[x][y] < lopinin || (map[x][y] > cross && map[x][y] < seg))) {map[x][y] = empty;}
             else if(state.buttons & 1 && map[x][y] == empty) {map[x][y] = lowire;}
         }
     }
+}
+
+int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy, int zm) {
+    int x = state.x / (20 / zm) + cx - (VIEW_X - VIEW_X / zm);
+    int y = state.y / (20 / zm) + cy - (VIEW_Y - VIEW_Y / zm);
+
+    if(map[x][y] == lowire || map[x][y] == hiwire) {
+        return -1;
+    } else if(map[x][y] == nand || map[x][y] == nandrot || map[x][y] == aboard) {
+        return 0;
+    } else if(map[x][y] == nor || map[x][y] == norrot || map[x][y] == oboard) {
+        return 1;
+    } else if(map[x][y] == loflip || map[x][y] == hiflip) {
+        return 2;
+    } else if(map[x][y] == lolight || map[x][y] == hilight) {
+        return 3;
+    } else if(map[x][y] == cross) {
+        return 4;
+    } else if(map[x][y] == lobridge1 || map[x][y] == hibridge1) {
+        return 5;
+    } else if(map[x][y] == lobridge2 || map[x][y] == hibridge2) {
+        return 6;
+    } else if(map[x][y] == seg || map[x][y] == segboard) {
+        return 7;
+    }
+
+    return -1;
 }
