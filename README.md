@@ -34,7 +34,6 @@ libstdc++-6.dll
 libwinpthread-1.dll
 ```
 ## TODO
-- Part picker tool
 - Copy & paste (blueprints)
 - Resolution options
 ## Screenshots
