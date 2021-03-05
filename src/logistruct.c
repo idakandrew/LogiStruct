@@ -56,8 +56,11 @@ int main(void) {
         ALLEGRO_BITMAP *logo = al_load_bitmap("data/logo.png");
         ALLEGRO_BITMAP *bg = al_load_bitmap("data/bg.png");
 
+
+
         while(1) {
             al_wait_for_event(queue, &event);
+            al_get_mouse_state(&mstate);
 
             switch(event.type) {
                 case ALLEGRO_EVENT_TIMER:
@@ -93,7 +96,7 @@ int main(void) {
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < len(mbtnlist); i++) {
-                    btn_draw(mbtnlist[i], font, &mcbtnlist[i]);
+                    btn_draw(mbtnlist[i], font, &mcbtnlist[i], mstate);
                 }
 
                 al_flip_display();
@@ -116,25 +119,28 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[10] = {
+        button sbtnlist[11] = {
             btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "L Mouse", "data/new.png"), 
             btn_build(250, 470, "R Mouse", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
             btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
             btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),
-            btn_build(1200, 610, "Mouse Wheel", "data/new.png"), btn_build(1200, 750, "R", "data/new.png")
+            btn_build(1200, 610, "Mouse Wheel", "data/new.png"), btn_build(1200, 750, "R", "data/new.png"),
+            btn_build(1200, 890, "Q", "data/new.png")
         };
 
-        char const *textlist[9] = {
+        char const *textlist[10] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
             "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
-            "Hold & drag to pan view.", "Toggle zoom level.", "Rotate gates horizontally."
+            "Hold & drag to pan view.", "Toggle zoom level.", "Rotate gates horizontally.",
+            "Select part on canvas."
         };
 
-        int xlist[9] = {490, 490, 490, 490, 490, 1440, 1440, 1440, 1440};
-        int ylist[9] = {330, 470, 610, 750, 890, 330, 470, 610, 750};
+        int xlist[10] = {490, 490, 490, 490, 490, 1440, 1440, 1440, 1440, 1440};
+        int ylist[10] = {330, 470, 610, 750, 890, 330, 470, 610, 750, 890};
 
         while(1) {
             al_wait_for_event(queue, &event);
+            al_get_mouse_state(&mstate);
 
             switch(event.type) {
                 case ALLEGRO_EVENT_TIMER:
@@ -164,7 +170,7 @@ int main(void) {
                 al_draw_filled_rectangle(970, 240, 1900, 980, nearblack);
 
                 for (int i = 0; i < len(sbtnlist); i++) {
-                    btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore);
+                    btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore, mstate);
                 }
 
                 for(int i = 0; i < len(textlist); i++) {
@@ -185,7 +191,7 @@ int main(void) {
         goto start;
 
     } else if (curr == canvas) {
-        bool grid = false, pan = false, click = false, pen = true;
+        bool grid = false, pan = false, click = false, pen = true, ask = false;
         int wait = 0, lock = -1, select = -1, option = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
         int cx = 500, cy = 499;
@@ -285,9 +291,16 @@ int main(void) {
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_TAB) {
                         grid = !grid;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) {
-                        memset(map, empty, sizeof(map));
+                        ask = !ask;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                        if(ask) {
+                            memset(map, empty, sizeof(map));
+                            ask = false;
+                        }
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_R) {
                         rot = (rot == 1) ? -1 : 1;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_Q) {
+                        select = part_picker(map, mstate, cx, cy, zm);
                     }
                     break;
                 case ALLEGRO_EVENT_KEY_UP:
@@ -332,14 +345,16 @@ int main(void) {
 
                 for(int i = 0 + 5 * page; i < 5 + 5 * page; i++) {
                     if(i < len(cbtnlist)) {
-                        btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i]);
+                        btn_draw(cbtnlist[i], fontlrg, &ccbtnlist[i], mstate);
                     }
                 }
                 for(int i = 0; i < len(nopglst); i++) {
-                    btn_draw(nopglst[i], fontlrg, &nopgclk[i]);
+                    btn_draw(nopglst[i], fontlrg, &nopgclk[i], mstate);
                 }
                 
                 toolbar_text(select, cx, cy, fontlrg, pen);
+
+                launch_codes(ask, fontlrg);
                 
                 al_flip_display();
                 redraw = false;

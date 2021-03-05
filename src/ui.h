@@ -14,12 +14,14 @@ typedef struct button {
 
 button btn_build(float cex, float cey, char *text, char *file);
 
-void btn_draw(button btn, ALLEGRO_FONT *font, int *time);
+void btn_draw(button btn, ALLEGRO_FONT *font, int *time, ALLEGRO_MOUSE_STATE state);
 
 bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time);
 
 void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font, bool pen);
 
 void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, int zm, int rot);
+
+void launch_codes(bool ask, ALLEGRO_FONT *font);
 
 #endif 

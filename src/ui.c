@@ -17,15 +17,18 @@ button btn_build(float cex, float cey, char *text, char *file) {
     return out;
 }
 
-void btn_draw(button btn, ALLEGRO_FONT *font, int *time) {
+void btn_draw(button btn, ALLEGRO_FONT *font, int *time, ALLEGRO_MOUSE_STATE state) {
     al_draw_bitmap(btn.bit, btn.x, btn.y, 0);
+    int xrange = (btn.cex - btn.x) * 2 + btn.x;
+    int yrange = (btn.cey - btn.y) * 2 + btn.y;
+    ALLEGRO_COLOR color = (*time > 0) ? al_map_rgba_f(.7, .7, .7, .7) : al_map_rgba_f(.85, .85, .85, .85);
 
     
-    if(*time > 0) {
+    if(*time > 0 || mtrx_range(state.x, state.y, btn.x, xrange, btn.y, yrange)) {
        al_draw_filled_rectangle(btn.cex - al_get_bitmap_width(btn.bit)/2, btn.cey - al_get_bitmap_height(btn.bit)/2, btn.cex + al_get_bitmap_width(btn.bit)/2, 
             btn.cey + al_get_bitmap_height(btn.bit)/2, al_map_rgb(250, 80, 80));
-        al_draw_tinted_bitmap(btn.bit, al_map_rgba_f(.7, .7, .7, .7), btn.x, btn.y, 0);
-        (*time)--;
+        al_draw_tinted_bitmap(btn.bit, color, btn.x, btn.y, 0);
+        if(time > 0) {(*time)--;}
     } 
 
     al_draw_text(font, white, btn.cex, btn.cey - al_get_font_line_height(font) / 2 - 4, ALLEGRO_ALIGN_CENTRE, btn.text);
@@ -42,6 +45,7 @@ bool btn_click(button btn, ALLEGRO_MOUSE_EVENT click, int *time) {
     return false;
 }
 
+// clean this up
 void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font, bool pen) {
     al_draw_textf(font, white, 240, 1055 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Coordinates: (%d : %d)", cx, MAP_Y - cy - 1);
     
@@ -82,5 +86,18 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
     } else if(select == 7) {
         al_draw_rectangle(adjx - 60 / zm, adjy - 140 / zm, adjx + 80 / zm, adjy + 160 / zm, white, 2);
         al_draw_text(font, white, adjx + fact / 2, adjy - 144 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
+    }
+}
+
+void launch_codes(bool ask, ALLEGRO_FONT *font) {
+    if(ask) {
+        al_draw_text(font, red, 960, 96, ALLEGRO_ALIGN_CENTER, "DELETE :: ARE YOU SURE?");
+        al_draw_text(font, white, 960, 100, ALLEGRO_ALIGN_CENTER, "DELETE :: ARE YOU SURE?");
+
+        al_draw_text(font, red, 960, 134, ALLEGRO_ALIGN_CENTER, "[BACKSPACE] TO CANCEL.");
+        al_draw_text(font, white, 960, 138, ALLEGRO_ALIGN_CENTER, "[BACKSPACE] TO CANCEL.");
+        
+        al_draw_text(font, red, 960, 172, ALLEGRO_ALIGN_CENTER, "[ENTER] TO CONFIRM.");
+        al_draw_text(font, white, 960, 176, ALLEGRO_ALIGN_CENTER, "[ENTER] TO CONFIRM.");
     }
 }
