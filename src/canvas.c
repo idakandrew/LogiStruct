@@ -14,9 +14,20 @@ int r_lim(int min, int val, int max) {
     if (val < min) {return min;}
     else if (val > max) {return max;}
     else {return val;}
-} 
+}
 
-// multithread?
+int zm_adj(int mode, int zm) {
+    switch(zm) {
+        case 2:
+            return mode ? 25 : 48;
+        case 4:
+            return mode ? 75 : 144;
+        default:
+            return 0;
+    }
+}
+
+// multithread? also what the hell is going with zoom
 void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
     ALLEGRO_COLOR colormap[24] = {
         bgcolor, mediumgrey, red, black, redblack, black, redblack, green,
@@ -26,7 +37,8 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
     static int xs[1000];
     static int ys[1000];
     int saved = 0;
-    int vxzm = VIEW_X - VIEW_X / zm, vyzm = VIEW_Y - VIEW_Y / zm;
+    int vxzm = zm_adj(0, zm), vyzm = zm_adj(1, zm);
+    int adj = 20 / zm;
 
     for(int i = cx - vxzm; i < cx + VIEW_X + vxzm; i++) {
         if(grid) {
@@ -39,11 +51,7 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
             }
 
             if(map[i][j] != empty) {
-                if(zm == 2) {
-                    al_draw_filled_rectangle((i-cx + vxzm)*10, (j-cy + vyzm)*10, (i-cx + vxzm)*10+10, (j-cy + vyzm)*10+10, colormap[map[i][j]]);
-                } else {
-                    al_draw_filled_rectangle((i-cx)*20, (j-cy)*20, (i-cx)*20+20, (j-cy)*20+20, colormap[map[i][j]]);
-                }
+                al_draw_filled_rectangle((i-cx + vxzm)*adj, (j-cy + vyzm)*adj, (i-cx + vxzm)*adj+adj, (j-cy + vyzm)*adj+adj, colormap[map[i][j]]);
                 if(map[i][j] == nand || map[i][j] == nor) {
                     xs[saved] = i, ys[saved] = j, saved++;
                 }
@@ -54,11 +62,11 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
     for(int i = 0; i < saved; i++) {
         if(mtrx_range(xs[i], ys[i], cx - vxzm, cx + VIEW_X + vxzm, cy - vyzm, cy + VIEW_Y + vxzm)) {
             if(map[xs[i]][ys[i]] == nand) {
-                al_draw_text(font, white, (xs[i] - cx + vxzm)*20/zm+10/zm, 
-                    (ys[i] - cy + vyzm)*20/zm+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NAND");
+                al_draw_text(font, white, (xs[i] - cx + vxzm)*adj+10/zm, 
+                    (ys[i] - cy + vyzm)*adj+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NAND");
             } else if(map[xs[i]][ys[i]] == nor) {
-                al_draw_text(font, white, (xs[i] - cx + vxzm)*20/zm+10/zm, 
-                    (ys[i] - cy + vyzm)*20/zm+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOR");
+                al_draw_text(font, white, (xs[i] - cx + vxzm)*adj+10/zm, 
+                    (ys[i] - cy + vyzm)*adj+9/zm - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTRE, "NOR");
             }
         }
     }
@@ -265,8 +273,8 @@ void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int 
 }
 
 int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy, int zm) {
-    int x = state.x / (20 / zm) + cx - (VIEW_X - VIEW_X / zm);
-    int y = state.y / (20 / zm) + cy - (VIEW_Y - VIEW_Y / zm);
+    int x = state.x / (20 / zm) + cx - (zm_adj(0, zm));
+    int y = state.y / (20 / zm) + cy - (zm_adj(1, zm));
 
     if(map[x][y] == lowire || map[x][y] == hiwire) {
         return -1;

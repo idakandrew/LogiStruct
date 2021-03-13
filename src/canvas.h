@@ -32,6 +32,8 @@ bool mtrx_range(int x, int y, int xmin, int xmax, int ymin, int ymax);
 
 int r_lim(int min, int val, int max);
 
+int zm_adj(int mode, int zm);
+
 void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font);
 
 void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y], int rot);

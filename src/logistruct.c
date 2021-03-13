@@ -203,6 +203,7 @@ int main(void) {
 
         ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
         ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
+        ALLEGRO_FONT *fontmin = al_load_ttf_font("data/mont.otf", 7, 0);
 
         int ccbtnlist[8] = {0, 0, 0, 0, 0, 0, 0};
         int nopgclk[4] = {0, 0, 0, 0};
@@ -269,13 +270,13 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     if(event.mouse.z > prevz) {
-                        zm = 1;
+                        zm = r_lim(1, zm / 2, 4);
                     } else if(event.mouse.z < prevz) {
-                        zm = 2;
+                        zm = r_lim(1, zm * 2, 4);
                     }
                     if(pan && click || event.mouse.z != prevz) {
-                        cx = r_lim(0 + VIEW_X - VIEW_X / zm, cx - (event.mouse.x / (20 / zm) - prevx / (20 / zm)), MAP_X - 2 * VIEW_X - 1 + VIEW_X / zm);
-                        cy = r_lim(0 + VIEW_Y - VIEW_Y / zm, cy - (event.mouse.y / (20 / zm) - prevy / (20 / zm)), MAP_Y - 2 * VIEW_Y - 1 + VIEW_Y / zm);
+                        cx = r_lim(0 + zm_adj(0, zm), cx - (event.mouse.x / (20 / zm) - prevx / (20 / zm)), MAP_X - VIEW_X - zm_adj(0, zm));
+                        cy = r_lim(0 + zm_adj(1, zm), cy - (event.mouse.y / (20 / zm) - prevy / (20 / zm)), MAP_Y - VIEW_X - zm_adj(1, zm));
                     }
                     prevx = event.mouse.x;
                     prevy = event.mouse.y;
@@ -321,8 +322,8 @@ int main(void) {
             }
 
             if(click && !pan) {
-                x = mstate.x / (20 / zm) + cx - (VIEW_X - VIEW_X / zm);
-                y = mstate.y / (20 / zm) + cy - (VIEW_Y - VIEW_Y / zm);
+                x = mstate.x / (20 / zm) + cx - zm_adj(0, zm);
+                y = mstate.y / (20 / zm) + cy - zm_adj(1, zm);
 
                 lock_axis(zm, &lock, &x, &y, lx, ly);
 
@@ -337,9 +338,9 @@ int main(void) {
             if(redraw && al_is_event_queue_empty(queue)) {
                 al_clear_to_color(bgcolor);
             
-                draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : fontsml);
+                draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : (zm == 2) ? fontsml : fontmin);
 
-                draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : fontsml, zm, rot);
+                draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : (zm == 2) ? fontsml : fontmin, zm, rot);
 
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
