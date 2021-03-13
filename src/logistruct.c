@@ -92,7 +92,7 @@ int main(void) {
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.3 (Feb 22, 2021)");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.4 (Mar 13, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < len(mbtnlist); i++) {
@@ -131,7 +131,7 @@ int main(void) {
         char const *textlist[10] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
             "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
-            "Hold & drag to pan view.", "Toggle zoom level.", "Rotate gates horizontally.",
+            "Hold & drag to pan view.", "Toggle zoom level.", "Flip gates horizontally.",
             "Select part on canvas."
         };
 
@@ -212,7 +212,7 @@ int main(void) {
             btn_build(660, 1040, "NAND", "data/select.png"), btn_build(810, 1040, "NOR", "data/select.png"), 
             btn_build(960, 1040, "Switch", "data/select.png"), btn_build(1110, 1040, "Light", "data/select.png"), 
             btn_build(1260, 1040, "Crossing", "data/select.png"), btn_build(660, 1040, "Bridge G", "data/select.png"),
-            btn_build(810, 1040, "Bridge B", "data/select.png"), btn_build(960, 1040, "8-Seg", "data/select.png")
+            btn_build(810, 1040, "Bridge B", "data/select.png"), btn_build(960, 1040, "7-Seg", "data/select.png")
         };
 
         button nopglst[4] = {
