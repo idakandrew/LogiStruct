@@ -24,4 +24,6 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
 
 void launch_codes(bool ask, ALLEGRO_FONT *font);
 
+void draw_box(int x, int y, int zm, ALLEGRO_MOUSE_STATE mstate, ALLEGRO_FONT *font, int mode);
+
 #endif 

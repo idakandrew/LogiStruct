@@ -56,8 +56,6 @@ int main(void) {
         ALLEGRO_BITMAP *logo = al_load_bitmap("data/logo.png");
         ALLEGRO_BITMAP *bg = al_load_bitmap("data/bg.png");
 
-
-
         while(1) {
             al_wait_for_event(queue, &event);
             al_get_mouse_state(&mstate);
@@ -192,9 +190,9 @@ int main(void) {
 
     } else if (curr == canvas) {
         bool grid = false, pan = false, click = false, pen = true, ask = false;
-        int wait = 0, lock = -1, select = -1, option = 0;
+        int wait = 0, lock = -1, select = -1, option = 0, cpy = 0, del = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
-        int cx = 500, cy = 499;
+        int cx = 500, cy = 499, boxorix = 0, boxoriy = 0, boxendx = 0, boxendy = 0;
         int zm = 1, prevz = 0;
         int page = 0, rot = 1;
         al_set_mouse_z(0);
@@ -302,6 +300,14 @@ int main(void) {
                         rot = (rot == 1) ? -1 : 1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_Q) {
                         select = part_picker(map, mstate, cx, cy, zm);
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_S) {
+                        cpy = 40;
+                        boxorix = mstate.x;
+                        boxoriy = mstate.y;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_D) {
+                        del = 40;
+                        boxorix = mstate.x;
+                        boxoriy = mstate.y;
                     }
                     break;
                 case ALLEGRO_EVENT_KEY_UP:
@@ -309,6 +315,14 @@ int main(void) {
                         lock = -1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
                         pan = false;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_S) {
+                        boxendx = mstate.x;
+                        boxendy = mstate.y;
+                        cpy = 39;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_D) {
+                        boxendx = mstate.x;
+                        boxendy = mstate.y;
+                        del = 39;
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -335,12 +349,26 @@ int main(void) {
                 ly = y;
             }
 
-            if(redraw && al_is_event_queue_empty(queue)) {
+            if(redraw && al_event_queue_is_empty(queue)) {
                 al_clear_to_color(bgcolor);
             
                 draw_map(zm, grid, map, cx, cy, (zm == 1) ? fontlrg : (zm == 2) ? fontsml : fontmin);
 
                 draw_ghost(select, cbtnlist, mstate.x, mstate.y, (zm == 1) ? fontlrg : (zm == 2) ? fontsml : fontmin, zm, rot);
+
+                if(cpy == 40) {
+                    draw_box(boxorix, boxoriy, zm, mstate, fontlrg, 0);
+                } else if(cpy > 0) {
+                    al_draw_filled_rectangle(boxorix / 20 * 20, boxoriy / 20 * 20, (boxendx+1) / 20 * 20, (boxendy+1) / 20 * 20, al_map_rgba(cpy/2, cpy/2, cpy/2, cpy/2));
+                    cpy--;
+                }
+
+                if(del == 40) {
+                    draw_box(boxorix, boxoriy, zm, mstate, fontlrg, 1);
+                } else if(del > 0) {
+                    al_draw_filled_rectangle(boxorix / 20 * 20, boxoriy / 20 * 20, (boxendx+1) / 20 * 20, (boxendy+1) / 20 * 20, al_map_rgba(del, del/2, del/2, del/2));
+                    del--;
+                }
 
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 

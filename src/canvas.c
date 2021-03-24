@@ -27,7 +27,6 @@ int zm_adj(int mode, int zm) {
     }
 }
 
-// multithread? also what the hell is going with zoom
 void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
     ALLEGRO_COLOR colormap[24] = {
         bgcolor, mediumgrey, red, black, redblack, black, redblack, green,

@@ -3,6 +3,14 @@
 #include "canvas.h"
 
 
+int max(int a, int b) {
+    if(a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
 button btn_build(float cex, float cey, char *text, char *file) {
     button out;
     ALLEGRO_BITMAP *bit = al_load_bitmap(file);
@@ -91,8 +99,8 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
 
 void launch_codes(bool ask, ALLEGRO_FONT *font) {
     if(ask) {
-        al_draw_text(font, red, 960, 96, ALLEGRO_ALIGN_CENTER, "DELETE :: ARE YOU SURE?");
-        al_draw_text(font, white, 960, 100, ALLEGRO_ALIGN_CENTER, "DELETE :: ARE YOU SURE?");
+        al_draw_text(font, red, 960, 96, ALLEGRO_ALIGN_CENTER, "CLEAR :: ARE YOU SURE?");
+        al_draw_text(font, white, 960, 100, ALLEGRO_ALIGN_CENTER, "CLEAR :: ARE YOU SURE?");
 
         al_draw_text(font, red, 960, 134, ALLEGRO_ALIGN_CENTER, "[BACKSPACE] TO CANCEL.");
         al_draw_text(font, white, 960, 138, ALLEGRO_ALIGN_CENTER, "[BACKSPACE] TO CANCEL.");
@@ -100,4 +108,17 @@ void launch_codes(bool ask, ALLEGRO_FONT *font) {
         al_draw_text(font, red, 960, 172, ALLEGRO_ALIGN_CENTER, "[ENTER] TO CONFIRM.");
         al_draw_text(font, white, 960, 176, ALLEGRO_ALIGN_CENTER, "[ENTER] TO CONFIRM.");
     }
+}
+
+void draw_box(int x, int y, int zm, ALLEGRO_MOUSE_STATE mstate, ALLEGRO_FONT *font, int mode) {
+    int fact = 20 / zm;
+    int adjx = x / fact * fact, adjy = y / fact * fact;
+    int textx = ((mstate.x+1) / 20 * 20 - adjx) / 2 + adjx, texty = max((mstate.y+1) / 20 * 20, adjy) + al_get_font_line_height(font) / 2;
+
+    if(mode == 0) {
+        al_draw_text(font, white, textx, texty, ALLEGRO_ALIGN_CENTER, "[COPY]");
+    } else if(mode == 1) {
+        al_draw_text(font, white, textx, texty, ALLEGRO_ALIGN_CENTER, "[DELETE]");
+    }
+    al_draw_rectangle(adjx, adjy, (mstate.x+1) / fact * fact, (mstate.y+1) / fact * fact, white, 2);
 }
