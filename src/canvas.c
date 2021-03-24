@@ -297,3 +297,15 @@ int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy
 
     return -1;
 }
+
+void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey) {
+    for(int i = ox; i < ex; i++) {
+        for(int j = oy; j < ey; j++) {
+            if(map[i][j] < lopinin || (map[i][j] > cross && map[i][j] < seg)) {
+                map[i][j] = empty;
+            } else if(map[i][j] > hipinout && !(map[i][j] > cross && map[i][j] < seg)) {
+                remove_chip(map, i, j);
+            }
+        }
+    }
+}

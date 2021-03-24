@@ -193,8 +193,8 @@ int main(void) {
         int wait = 0, lock = -1, select = -1, option = 0, cpy = 0, del = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
         int cx = 500, cy = 499, boxorix = 0, boxoriy = 0, boxendx = 0, boxendy = 0;
-        int zm = 1, prevz = 0;
-        int page = 0, rot = 1;
+        int zm = 1, prevz = 0, fact = 20;
+        int page = 0, rot = 1, lastsave = 0;
         al_set_mouse_z(0);
         static int map[MAP_X][MAP_Y];
         load_canvas(map);
@@ -225,6 +225,10 @@ int main(void) {
 
             switch (event.type) {
                 case ALLEGRO_EVENT_TIMER:
+                    if(al_get_timer_count(timer) % 18000 == 0) {
+                        save_canvas(map);
+                        lastsave = 180;
+                    }
                     wire_sim(map, 0, 0, 0);
                     chip_sim(map);
                     wait--;
@@ -269,8 +273,10 @@ int main(void) {
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     if(event.mouse.z > prevz) {
                         zm = r_lim(1, zm / 2, 4);
+                        fact = 20 / zm;
                     } else if(event.mouse.z < prevz) {
                         zm = r_lim(1, zm * 2, 4);
+                        fact = 20 / zm;
                     }
                     if(pan && click || event.mouse.z != prevz) {
                         cx = r_lim(0 + zm_adj(0, zm), cx - (event.mouse.x / (20 / zm) - prevx / (20 / zm)), MAP_X - VIEW_X - zm_adj(0, zm));
@@ -300,12 +306,14 @@ int main(void) {
                         rot = (rot == 1) ? -1 : 1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_Q) {
                         select = part_picker(map, mstate, cx, cy, zm);
-                    } else if(event.keyboard.keycode == ALLEGRO_KEY_S) {
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_C) {
                         cpy = 40;
+                        del = 0;
                         boxorix = mstate.x;
                         boxoriy = mstate.y;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_D) {
                         del = 40;
+                        cpy = 0;
                         boxorix = mstate.x;
                         boxoriy = mstate.y;
                     }
@@ -315,7 +323,7 @@ int main(void) {
                         lock = -1;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
                         pan = false;
-                    } else if(event.keyboard.keycode == ALLEGRO_KEY_S) {
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_C) {
                         boxendx = mstate.x;
                         boxendy = mstate.y;
                         cpy = 39;
@@ -323,6 +331,8 @@ int main(void) {
                         boxendx = mstate.x;
                         boxendy = mstate.y;
                         del = 39;
+                        region_delete(map, boxorix / (20 / zm) + cx - zm_adj(0, zm), boxoriy / (20 / zm) + cy - zm_adj(1, zm),
+                            boxendx / (20 / zm) + cx - zm_adj(0, zm), boxendy / (20 / zm) + cy - zm_adj(1, zm));
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -359,14 +369,16 @@ int main(void) {
                 if(cpy == 40) {
                     draw_box(boxorix, boxoriy, zm, mstate, fontlrg, 0);
                 } else if(cpy > 0) {
-                    al_draw_filled_rectangle(boxorix / 20 * 20, boxoriy / 20 * 20, (boxendx+1) / 20 * 20, (boxendy+1) / 20 * 20, al_map_rgba(cpy/2, cpy/2, cpy/2, cpy/2));
+                    al_draw_filled_rectangle(boxorix / fact * fact, boxoriy / fact * fact, (boxendx+1) / fact * fact, 
+                        (boxendy+1) / fact * fact, al_map_rgba(cpy/2, cpy/2, cpy/2, cpy/2));
                     cpy--;
                 }
 
                 if(del == 40) {
                     draw_box(boxorix, boxoriy, zm, mstate, fontlrg, 1);
                 } else if(del > 0) {
-                    al_draw_filled_rectangle(boxorix / 20 * 20, boxoriy / 20 * 20, (boxendx+1) / 20 * 20, (boxendy+1) / 20 * 20, al_map_rgba(del, del/2, del/2, del/2));
+                    al_draw_filled_rectangle(boxorix / fact * fact, boxoriy / fact * fact, (boxendx+1) / fact * fact, 
+                        (boxendy+1) / fact * fact, al_map_rgba(del, del/2, del/2, del/2));
                     del--;
                 }
 
@@ -383,7 +395,12 @@ int main(void) {
                 
                 toolbar_text(select, cx, cy, fontlrg, pen);
 
-                launch_codes(ask, fontlrg);
+                if(lastsave > 0) {
+                    save_text(fontlrg);
+                    lastsave--;
+                } else {
+                    launch_codes(ask, fontlrg);
+                }
                 
                 al_flip_display();
                 redraw = false;

@@ -48,4 +48,6 @@ void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int 
 
 int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy, int zm);
 
+void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey);
+
 #endif

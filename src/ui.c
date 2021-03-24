@@ -110,6 +110,11 @@ void launch_codes(bool ask, ALLEGRO_FONT *font) {
     }
 }
 
+void save_text(ALLEGRO_FONT *font) {
+    al_draw_text(font, red, 960, 96, ALLEGRO_ALIGN_CENTER, "AUTO-SAVING");
+    al_draw_text(font, white, 960, 100, ALLEGRO_ALIGN_CENTER, "AUTO-SAVING");
+}
+
 void draw_box(int x, int y, int zm, ALLEGRO_MOUSE_STATE mstate, ALLEGRO_FONT *font, int mode) {
     int fact = 20 / zm;
     int adjx = x / fact * fact, adjy = y / fact * fact;
