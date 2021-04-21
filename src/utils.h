@@ -5,8 +5,8 @@
 
 void fix_dir(void);
 
-void save_canvas(int map[MAP_X][MAP_Y]);
+void save_canvas(int map[MAP_X][MAP_Y], int *posx, int *posy);
 
-void load_canvas(int map[MAP_X][MAP_Y]);
+void load_canvas(int map[MAP_X][MAP_Y], int *posx, int *posy);
 
 #endif

@@ -59,6 +59,20 @@ void *chip_sim(int map[MAP_X][MAP_Y]) {
                 if(map[i+3][j+7] == hipinin) {
                     map[i+1][j+5] = map[i+2][j+5] = hilight;
                 }
+            } else if(map[i][j] == onewayh) {
+                rot = (map[i + 1][j] == onerot) ? 1 : -1;
+                if(map[i-2*rot][j] == hipinin) {
+                    map[i+2*rot][j] = hipinout;
+                } else if(map[i-2*rot][j] == lopinin) {
+                    map[i+2*rot][j] = lopinout;
+                }
+            } else if(map[i][j] == onewayv) {
+                rot = (map[i][j - 1] == onerot) ? 1 : -1;
+                if(map[i][j+2*rot] == hipinin) {
+                    map[i][j-2*rot] = hipinout;
+                } else if(map[i][j+2*rot] == lopinin) {
+                    map[i][j-2*rot] = lopinout;
+                }
             }
         }
     }

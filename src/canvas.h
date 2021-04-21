@@ -14,7 +14,8 @@
 #define gold al_map_rgb(150, 150, 0)
 #define green al_map_rgb(0, 145, 45)
 #define blue al_map_rgb(0, 80, 180)
-#define purp al_map_rgb(60, 35, 120)
+#define purp al_map_rgb(70, 35, 120)
+#define orange al_map_rgb(220, 80, 0)
 
 #define MAP_X 1000
 #define MAP_Y 1000
@@ -24,7 +25,7 @@
 typedef enum component {
     empty, lowire, hiwire, lopinin, hipinin, lopinout, hipinout, aboard, oboard, 
     nand, nor, nandrot, norrot, lolight, hilight, loflip, hiflip, cross, lobridge1, hibridge1, 
-    lobridge2, hibridge2, seg, segboard
+    lobridge2, hibridge2, seg, segboard, onewayh, onewayv, onerot
 } comp;
 
 
@@ -48,6 +49,10 @@ void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int 
 
 int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy, int zm);
 
-void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey);
+void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey, bool ask);
+
+int *region_copy(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey, int *boxsx, int *boxsy);
+
+void region_paste(int map[MAP_X][MAP_Y], int *box, int boxsx, int boxsy, int x, int y);
 
 #endif

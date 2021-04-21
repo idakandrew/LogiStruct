@@ -66,6 +66,7 @@ void toolbar_text(int select, int cx, int cy, ALLEGRO_FONT *font, bool pen) {
     else if(select == 5) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Bridge G");}
     else if(select == 6) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: Bridge B");}
     else if(select == 7) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: 8-Seg");}
+    else if(select == 8) {al_draw_text(font, white, 240, 1025 - al_get_font_line_height(font) / 2, ALLEGRO_ALIGN_CENTER, "Selected: One-Way");}
 
     al_draw_textf(font, white, 1690, 1040 - al_get_font_line_height(font) / 2 - 4, ALLEGRO_ALIGN_CENTER, "Edit: %s", pen ? "On" : "Off");
 }
@@ -78,7 +79,8 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
 
     if((select == 0 || select == 1) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
         al_draw_rectangle(adjx - 60 / zm, adjy - 20 / zm, adjx + 80 / zm, adjy + 40 / zm, white, 2);
-        al_draw_textf(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, "%s %s %s", left, cbtnlist[select].text, right);
+        al_draw_textf(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, 
+            "%s %s %s", left, cbtnlist[select].text, right);
     } else if((select == 2 || select == 3) && mtrx_range(x, y, 0, 1920, 0, 1000)) {
         al_draw_rectangle(adjx - 20 / zm, adjy - 20 / zm, adjx + 40 / zm, adjy + 40 / zm, white, 2);
         al_draw_text(font, white, adjx + fact / 2, adjy - 24 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
@@ -94,6 +96,14 @@ void draw_ghost(int select, button *cbtnlist, int x, int y, ALLEGRO_FONT *font, 
     } else if(select == 7) {
         al_draw_rectangle(adjx - 60 / zm, adjy - 140 / zm, adjx + 80 / zm, adjy + 160 / zm, white, 2);
         al_draw_text(font, white, adjx + fact / 2, adjy - 144 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, cbtnlist[select].text);
+    } else if(select == 8) {
+        al_draw_rectangle(adjx - 40 / zm, adjy, adjx + 60 / zm, adjy + 20 / zm, white, 2);
+        al_draw_textf(font, white, adjx + fact / 2, adjy - 12 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, 
+            "%s %s %s", left, cbtnlist[select].text, right);
+    } else if(select == 9) {
+        al_draw_rectangle(adjx, adjy - 40 / zm, adjx + 20 / zm, adjy + 60 / zm, white, 2);
+        al_draw_textf(font, white, adjx + fact / 2, adjy - 48 / zm - al_get_font_line_height(font), ALLEGRO_ALIGN_CENTER, 
+            "%s : %s", rot == 1 ? "^" : "v", cbtnlist[select].text);
     }
 }
 
@@ -118,7 +128,7 @@ void save_text(ALLEGRO_FONT *font) {
 void draw_box(int x, int y, int zm, ALLEGRO_MOUSE_STATE mstate, ALLEGRO_FONT *font, int mode) {
     int fact = 20 / zm;
     int adjx = x / fact * fact, adjy = y / fact * fact;
-    int textx = ((mstate.x+1) / 20 * 20 - adjx) / 2 + adjx, texty = max((mstate.y+1) / 20 * 20, adjy) + al_get_font_line_height(font) / 2;
+    int textx = ((mstate.x+1) / fact * fact - adjx) / 2 + adjx, texty = max((mstate.y+1) / fact * fact, adjy) + al_get_font_line_height(font) / 2;
 
     if(mode == 0) {
         al_draw_text(font, white, textx, texty, ALLEGRO_ALIGN_CENTER, "[COPY]");

@@ -28,10 +28,10 @@ int zm_adj(int mode, int zm) {
 }
 
 void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_FONT *font) {
-    ALLEGRO_COLOR colormap[24] = {
+    ALLEGRO_COLOR colormap[27] = {
         bgcolor, mediumgrey, red, black, redblack, black, redblack, green,
         blue, green, blue, green, blue, lightgrey, white, black, redblack, gold, green, 
-        redblack, blue, redblack, purp, purp
+        redblack, blue, redblack, purp, purp, orange, orange, purp
     };
     static int xs[1000];
     static int ys[1000];
@@ -193,6 +193,34 @@ void place_chip(int x, int y, comp chip, int map[MAP_X][MAP_Y], int rot) {
         }
         map[x + 1][y + 5] = map[x + 2][y + 5] = lolight;
         map[x][y] = seg;
+    } else if(chip == onewayh) {
+        x = r_lim(1, x, MAP_X - 1 - 2);
+        y = r_lim(1, y, MAP_Y - 1);
+        for(int i = x - 2; i < x + 3; i++) {
+            for(int j = y - 1; j < y + 2; j++) {
+                if(map[r_lim(0, i, MAP_X - 1)][r_lim(0, j, MAP_Y - 1)] > hiwire) {
+                    goto trip;
+                }
+            }
+        }
+        map[x][y] = map[x - rot][y] = onewayh;
+        map[x + rot][y] = onerot;
+        map[x - 2 * rot][y] = lopinin;
+        map[x + 2 * rot][y] = lopinout;
+    } else if(chip == onewayv) {
+        x = r_lim(1, x, MAP_X - 1);
+        y = r_lim(1, y, MAP_Y - 1 - 2);
+        for(int i = x - 1; i < x + 2; i++) {
+            for(int j = y - 2; j < y + 3; j++) {
+                if(map[r_lim(0, i, MAP_X - 1)][r_lim(0, j, MAP_Y - 1)] > hiwire) {
+                    goto trip;
+                }
+            }
+        }
+        map[x][y] = map[x][y + rot] = onewayv;
+        map[x][y - rot] = onerot;
+        map[x][y + 2 * rot] = lopinin;
+        map[x][y - 2 * rot] = lopinout;
     }
     trip:
         return;
@@ -265,6 +293,8 @@ void click_handler(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int x, int 
             else if(select == 5 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge1, map, 0);}
             else if(select == 6 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, lobridge2, map, 0);}
             else if(select == 7 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, seg, map, 0);}
+            else if(select == 8 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, onewayh, map, rot);}
+            else if(select == 9 && map[x][y] < lopinin && state.buttons & 1) {place_chip(x, y, onewayv, map, rot);}
             else if(state.buttons & 2 && (map[x][y] < lopinin || (map[x][y] > cross && map[x][y] < seg))) {map[x][y] = empty;}
             else if(state.buttons & 1 && map[x][y] == empty) {map[x][y] = lowire;}
         }
@@ -293,18 +323,50 @@ int part_picker(int map[MAP_X][MAP_Y], ALLEGRO_MOUSE_STATE state, int cx, int cy
         return 6;
     } else if(map[x][y] == seg || map[x][y] == segboard) {
         return 7;
+    } else if(map[x][y] == onewayh) {
+        return 8;
+    } else if(map[x][y] == onewayv) {
+        return 9;
     }
 
     return -1;
 }
 
-void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey) {
+void region_delete(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey, bool ask) {
     for(int i = ox; i < ex; i++) {
         for(int j = oy; j < ey; j++) {
+            if(ask) {
+                map[i][j] = empty;
+            }
             if(map[i][j] < lopinin || (map[i][j] > cross && map[i][j] < seg)) {
                 map[i][j] = empty;
             } else if(map[i][j] > hipinout && !(map[i][j] > cross && map[i][j] < seg)) {
                 remove_chip(map, i, j);
+            }
+        }
+    }
+}
+
+int *region_copy(int map[MAP_X][MAP_Y], int ox, int oy, int ex, int ey, int *boxsx, int *boxsy) {
+    *boxsx = ex - ox;
+    *boxsy = ey - oy;
+
+    int *box = malloc((*boxsx) * (*boxsy) * sizeof(int));
+
+    for(int i = ox, k = 0; i < ex; i++) {
+        for(int j = oy; j < ey; j++, k++) {
+            box[k] = map[i][j];
+        }
+    }
+
+    return box;
+}
+
+void region_paste(int map[MAP_X][MAP_Y], int *box, int boxsx, int boxsy, int x, int y) {
+    for(int i = x, k = 0; i < x + boxsx; i++) {
+        for(int j = y; j < y + boxsy; j++, k++) {
+            if(box[k] != empty) {
+                map[i][j] = box[k];
             }
         }
     }

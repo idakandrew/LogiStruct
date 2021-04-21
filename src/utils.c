@@ -11,18 +11,23 @@ void fix_dir(void) {
     chdir(path); 
 }
 
-void save_canvas(int map[MAP_X][MAP_Y]) {
+void save_canvas(int map[MAP_X][MAP_Y], int *posx, int *posy) {
     FILE *fp = fopen("data/save.bin", "wb");
     if(fp != NULL) {
         fseek(fp, 0, SEEK_SET);
+        fwrite(posx, sizeof(int), 1, fp);
+        fwrite(posy, sizeof(int), 1, fp);
         fwrite(map, sizeof(int)*MAP_X*MAP_Y, 1, fp);
         fclose(fp);
     }
 }
 
-void load_canvas(int map[MAP_X][MAP_Y]) {
+void load_canvas(int map[MAP_X][MAP_Y], int *posx, int *posy) {
     FILE *fp = fopen("data/save.bin", "rb");
     if(fp != NULL) {
+        fseek(fp, 0, SEEK_SET);
+        fread(posx, sizeof(int), 1, fp);
+        fread(posy, sizeof(int), 1, fp);
         fread(map, sizeof(int)*MAP_X*MAP_Y, 1, fp);
         fclose(fp);
     }

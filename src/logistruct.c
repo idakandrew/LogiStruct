@@ -97,12 +97,16 @@ int main(void) {
                     btn_draw(mbtnlist[i], font, &mcbtnlist[i], mstate);
                 }
 
+                al_draw_filled_rectangle(1140, 585, 1175, 620, red);
+                al_draw_text(font, white, 1157, 582, ALLEGRO_ALIGN_CENTER, "!");
+
                 al_flip_display();
                 redraw = false;
             }
         }
 
         al_destroy_bitmap(logo);
+        al_destroy_bitmap(bg);
         for(int i = 0; i < len(mbtnlist); i++) {
             al_destroy_bitmap(mbtnlist[i].bit);
         }
@@ -112,29 +116,44 @@ int main(void) {
         goto start;
 
     } else if(curr == settings) {
-        int scbtn0 = 0, ignore = 0;
+        int ignore = 0, settingPage = 0, settingOpt = 0;
 
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[11] = {
-            btn_build(250, 70, "Menu", "data/new.png"), btn_build(250, 330, "L Mouse", "data/new.png"), 
-            btn_build(250, 470, "R Mouse", "data/new.png"), btn_build(250, 610, "L Shift", "data/new.png"), 
-            btn_build(250, 750, "Tab", "data/new.png"), btn_build(250, 890, "Esc", "data/new.png"), 
-            btn_build(1200, 330, "Backspace", "data/new.png"), btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),
-            btn_build(1200, 610, "Mouse Wheel", "data/new.png"), btn_build(1200, 750, "R", "data/new.png"),
-            btn_build(1200, 890, "Q", "data/new.png")
+        button sbtnlist[13] = {
+            btn_build(250, 330, "L Mouse", "data/new.png"), btn_build(250, 470, "R Mouse", "data/new.png"), 
+            btn_build(250, 610, "L Shift", "data/new.png"), btn_build(250, 750, "Tab", "data/new.png"), 
+            btn_build(250, 890, "Esc", "data/new.png"), btn_build(1200, 330, "Backspace", "data/new.png"), 
+            btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),btn_build(1200, 610, "Mouse Wheel", "data/new.png"), 
+            btn_build(1200, 750, "R", "data/new.png"),btn_build(1200, 890, "Q", "data/new.png"),
+            btn_build(250, 330, "Hold C + Drag", "data/new.png"), btn_build(250, 470, "Hold D + Drag", "data/new.png"),
+            btn_build(250, 610, "V", "data/new.png")
         };
 
-        char const *textlist[10] = {
+        button settingCtrl[3] = {
+            btn_build(570, 70, "<<", "data/select.png"), btn_build(730, 70, ">>", "data/select.png"),
+            btn_build(250, 70, "Menu", "data/new.png")
+        };
+
+        int ctrlClk[3] = {0, 0, 0};
+
+        char const *textlist[13] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
             "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
             "Hold & drag to pan view.", "Toggle zoom level.", "Flip gates horizontally.",
-            "Select part on canvas."
+            "Select part on canvas.", "Select region to copy.", "Select region to delete.",
+            "Toggle paste mode."
         };
 
-        int xlist[10] = {490, 490, 490, 490, 490, 1440, 1440, 1440, 1440, 1440};
-        int ylist[10] = {330, 470, 610, 750, 890, 330, 470, 610, 750, 890};
+        int xlist[13] = {
+            490, 490, 490, 490, 490, 1440, 1440, 1440, 1440, 1440,
+            490, 490, 490
+        };
+        int ylist[13] = {
+            330, 470, 610, 750, 890, 330, 470, 610, 750, 890,
+            330, 470, 610
+        };
 
         while(1) {
             al_wait_for_event(queue, &event);
@@ -145,14 +164,28 @@ int main(void) {
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                    btn_click(sbtnlist[0], event.mouse, &scbtn0);
+                    for(int i = 0; i < len(settingCtrl); i++) {
+                        if(btn_click(settingCtrl[i], event.mouse, &ctrlClk[i])) {
+                            settingOpt = i;
+                        }
+                    }
+                    switch(settingOpt) {
+                        case 0:
+                            settingPage = r_lim(0, --settingPage, 1);
+                            break;
+                        case 1:
+                            settingPage = r_lim(0, ++settingPage, 1);
+                            break;
+                    }
+                    settingOpt = 2;
+
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     done = true;
                     break;
             }
 
-            if(scbtn0 == 1) {
+            if(ctrlClk[2] == 1) {
                 curr = menu;
                 break;
             } else if(done) {
@@ -167,12 +200,15 @@ int main(void) {
                 al_draw_filled_rectangle(20, 240, 950, 980, nearblack);
                 al_draw_filled_rectangle(970, 240, 1900, 980, nearblack);
 
-                for (int i = 0; i < len(sbtnlist); i++) {
-                    btn_draw(sbtnlist[i], font, (i == 0) ? &scbtn0 : &ignore, mstate);
+                for(int i = 0 + 10 * settingPage; i < 10 + 10 * settingPage; i++) {
+                    if(i < len(sbtnlist)) {
+                        btn_draw(sbtnlist[i], font, &ignore, mstate);
+                        al_draw_text(font, white, xlist[i], ylist[i] - halfline, 0, textlist[i]);
+                    }
                 }
 
-                for(int i = 0; i < len(textlist); i++) {
-                    al_draw_text(font, white, xlist[i], ylist[i] - halfline, 0, textlist[i]);
+                for(int i = 0; i < len(settingCtrl); i++) {
+                    btn_draw(settingCtrl[i], font, &ctrlClk[i], mstate);
                 }
 
                 al_flip_display();
@@ -183,34 +219,38 @@ int main(void) {
         for(int i = 0; i < len(sbtnlist); i++) {
             al_destroy_bitmap(sbtnlist[i].bit);
         }
+        for(int i = 0; i < len(settingCtrl); i++) {
+            al_destroy_bitmap(settingCtrl[i].bit);
+        }
         al_destroy_font(font);
         al_flush_event_queue(queue);
 
         goto start;
 
     } else if (curr == canvas) {
-        bool grid = false, pan = false, click = false, pen = true, ask = false;
+        bool grid = false, pan = false, click = false, pen = true, ask = false, paste = false;
         int wait = 0, lock = -1, select = -1, option = 0, cpy = 0, del = 0;
         int x = 0, y = 0, prevx = 0, prevy = 0, lx = 0, ly = 0;
-        int cx = 500, cy = 499, boxorix = 0, boxoriy = 0, boxendx = 0, boxendy = 0;
+        int cx = 500, cy = 499, boxorix = 0, boxoriy = 0, boxendx = 0, boxendy = 0, boxSizeX = 0, boxSizeY = 0;
         int zm = 1, prevz = 0, fact = 20;
-        int page = 0, rot = 1, lastsave = 0;
+        int page = 0, rot = 1, lastsave = 0, boxsx = 0, boxsy = 0, *box = NULL;
         al_set_mouse_z(0);
         static int map[MAP_X][MAP_Y];
-        load_canvas(map);
+        load_canvas(map, &cx, &cy);
 
         ALLEGRO_FONT *fontlrg = al_load_ttf_font("data/mont.otf", 26, 0);
         ALLEGRO_FONT *fontsml = al_load_ttf_font("data/mont.otf", 13, 0);
         ALLEGRO_FONT *fontmin = al_load_ttf_font("data/mont.otf", 7, 0);
 
-        int ccbtnlist[8] = {0, 0, 0, 0, 0, 0, 0};
+        int ccbtnlist[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         int nopgclk[4] = {0, 0, 0, 0};
 
-        button cbtnlist[8] = {
+        button cbtnlist[10] = {
             btn_build(660, 1040, "NAND", "data/select.png"), btn_build(810, 1040, "NOR", "data/select.png"), 
             btn_build(960, 1040, "Switch", "data/select.png"), btn_build(1110, 1040, "Light", "data/select.png"), 
             btn_build(1260, 1040, "Crossing", "data/select.png"), btn_build(660, 1040, "Bridge G", "data/select.png"),
-            btn_build(810, 1040, "Bridge B", "data/select.png"), btn_build(960, 1040, "7-Seg", "data/select.png")
+            btn_build(810, 1040, "Bridge B", "data/select.png"), btn_build(960, 1040, "7-Seg", "data/select.png"), 
+            btn_build(1110, 1040, "Diode H", "data/select.png"), btn_build(1260, 1040, "Diode V", "data/select.png")
         };
 
         button nopglst[4] = {
@@ -226,7 +266,7 @@ int main(void) {
             switch (event.type) {
                 case ALLEGRO_EVENT_TIMER:
                     if(al_get_timer_count(timer) % 18000 == 0) {
-                        save_canvas(map);
+                        save_canvas(map, &cx, &cy);
                         lastsave = 180;
                     }
                     wire_sim(map, 0, 0, 0);
@@ -291,6 +331,7 @@ int main(void) {
                         pan = true;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
                         select = -1;
+                        paste = false;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_LSHIFT) {
                         lock = 0;
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_TAB) {
@@ -316,6 +357,8 @@ int main(void) {
                         cpy = 0;
                         boxorix = mstate.x;
                         boxoriy = mstate.y;
+                    } else if(event.keyboard.keycode == ALLEGRO_KEY_V) {
+                        paste = !paste;
                     }
                     break;
                 case ALLEGRO_EVENT_KEY_UP:
@@ -327,12 +370,17 @@ int main(void) {
                         boxendx = mstate.x;
                         boxendy = mstate.y;
                         cpy = 39;
+                        free(box);
+                        box = region_copy(map, boxorix / (20 / zm) + cx - zm_adj(0, zm), boxoriy / (20 / zm) + cy - zm_adj(1, zm),
+                            boxendx / (20 / zm) + cx - zm_adj(0, zm), boxendy / (20 / zm) + cy - zm_adj(1, zm), &boxsx, &boxsy);
+                        boxSizeX = (boxendx / (20 / zm) + cx - zm_adj(0, zm)) - (boxorix / (20 / zm) + cx - zm_adj(0, zm));
+                        boxSizeY = (boxendy / (20 / zm) + cy - zm_adj(1, zm)) - (boxoriy / (20 / zm) + cy - zm_adj(1, zm));
                     } else if(event.keyboard.keycode == ALLEGRO_KEY_D) {
                         boxendx = mstate.x;
                         boxendy = mstate.y;
                         del = 39;
                         region_delete(map, boxorix / (20 / zm) + cx - zm_adj(0, zm), boxoriy / (20 / zm) + cy - zm_adj(1, zm),
-                            boxendx / (20 / zm) + cx - zm_adj(0, zm), boxendy / (20 / zm) + cy - zm_adj(1, zm));
+                            boxendx / (20 / zm) + cx - zm_adj(0, zm), boxendy / (20 / zm) + cy - zm_adj(1, zm), ask);
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -349,11 +397,15 @@ int main(void) {
                 x = mstate.x / (20 / zm) + cx - zm_adj(0, zm);
                 y = mstate.y / (20 / zm) + cy - zm_adj(1, zm);
 
-                lock_axis(zm, &lock, &x, &y, lx, ly);
-
                 wait = r_lim(0, wait, 20);
 
-                click_handler(map, mstate, x, y, select, &wait, pen, rot);
+                if(paste && mstate.buttons & 1) {
+                    region_paste(map, box, boxsx, boxsy, mstate.x / (20 / zm) + cx - zm_adj(0, zm) - floor(boxsx / 2), 
+                        mstate.y / (20 / zm) + cy - zm_adj(1, zm) - floor(boxsy / 2));
+                } else {
+                    lock_axis(zm, &lock, &x, &y, lx, ly);
+                    click_handler(map, mstate, x, y, select, &wait, pen, rot);
+                }
 
                 lx = x;
                 ly = y;
@@ -382,6 +434,24 @@ int main(void) {
                     del--;
                 }
 
+                if(paste) {
+                    for(int i = 0, k = 0; i < boxSizeX; i++) {
+                        for(int j = 0; j < boxSizeY; j++, k++) {
+                            if(box[k] != empty) {
+                                al_draw_rectangle(
+                                    mstate.x / fact * fact + i * fact - floor(boxSizeX / 2) * fact, 
+                                    mstate.y / fact * fact + j * fact - floor(boxSizeY / 2) * fact,
+                                    mstate.x / fact * fact + i * fact + fact - floor(boxSizeX / 2) * fact, 
+                                    mstate.y / fact * fact + j * fact + fact - floor(boxSizeY / 2) * fact, white, 1
+                                );
+                            }
+                        }
+                    }
+                    
+                    al_draw_text(fontlrg, white, mstate.x / fact * fact + ceil(fact / 2), mstate.y / fact * fact + (floor(boxSizeY / 2) + 1) * fact,
+                    ALLEGRO_ALIGN_CENTER, "[PASTE]");
+                }
+
                 al_draw_filled_rectangle(0, 1000, 1920, 1080, nearblack);
 
                 for(int i = 0 + 5 * page; i < 5 + 5 * page; i++) {
@@ -407,7 +477,9 @@ int main(void) {
             }
         }
 
-        save_canvas(map);
+        save_canvas(map, &cx, &cy);
+
+        free(box);
 
         al_destroy_font(fontlrg);
         al_destroy_font(fontsml);
