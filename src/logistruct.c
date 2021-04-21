@@ -121,14 +121,15 @@ int main(void) {
         ALLEGRO_FONT *font = al_load_ttf_font("data/mont.otf", 32, 0);
         int halfline = al_get_font_line_height(font) / 2;
 
-        button sbtnlist[13] = {
+        button sbtnlist[15] = {
             btn_build(250, 330, "L Mouse", "data/new.png"), btn_build(250, 470, "R Mouse", "data/new.png"), 
             btn_build(250, 610, "L Shift", "data/new.png"), btn_build(250, 750, "Tab", "data/new.png"), 
             btn_build(250, 890, "Esc", "data/new.png"), btn_build(1200, 330, "Backspace", "data/new.png"), 
             btn_build(1200, 470, "Space + L/R Mouse", "data/new.png"),btn_build(1200, 610, "Mouse Wheel", "data/new.png"), 
             btn_build(1200, 750, "R", "data/new.png"),btn_build(1200, 890, "Q", "data/new.png"),
             btn_build(250, 330, "Hold C + Drag", "data/new.png"), btn_build(250, 470, "Hold D + Drag", "data/new.png"),
-            btn_build(250, 610, "V", "data/new.png")
+            btn_build(250, 610, "Backspace + Hold D", "data/new.png"), btn_build(250, 750, "V", "data/new.png"), 
+            btn_build(250, 890, "V + L/R Mouse", "data/new.png"),
         };
 
         button settingCtrl[3] = {
@@ -138,21 +139,21 @@ int main(void) {
 
         int ctrlClk[3] = {0, 0, 0};
 
-        char const *textlist[13] = {
+        char const *textlist[15] = {
             "Place wire and objects.", "Erase wire and objects.", "Lock placement axis.", 
             "Toggle grid overlay.", "Deselect current object.", "Clear canvas.", 
             "Hold & drag to pan view.", "Toggle zoom level.", "Flip gates horizontally.",
             "Select part on canvas.", "Select region to copy.", "Select region to delete.",
-            "Toggle paste mode."
+            "Force delete (not safe).", "Toggle paste mode.", "Click to place blueprint."
         };
 
-        int xlist[13] = {
+        int xlist[15] = {
             490, 490, 490, 490, 490, 1440, 1440, 1440, 1440, 1440,
-            490, 490, 490
+            490, 490, 490, 490, 490
         };
-        int ylist[13] = {
+        int ylist[15] = {
             330, 470, 610, 750, 890, 330, 470, 610, 750, 890,
-            330, 470, 610
+            330, 470, 610, 750, 890
         };
 
         while(1) {
@@ -209,6 +210,22 @@ int main(void) {
 
                 for(int i = 0; i < len(settingCtrl); i++) {
                     btn_draw(settingCtrl[i], font, &ctrlClk[i], mstate);
+                }
+
+                al_draw_filled_rectangle(780, 25, 820, 65, red);
+                al_draw_text(font, white, 800, 25, ALLEGRO_ALIGN_CENTER, "!");
+
+                if(settingPage == 1) {
+                    al_draw_multiline_text(font, white, 1025, 285, 800, 42, 0, 
+                        "It's been a good few months now since I started this project "
+                        "and it's grown far beyond everything I initially envisioned it to be. "
+                        "As such, I think it's finally reached the point where I can proudly call it "
+                        "'complete'. Of course in reality there are still dozens of features I can "
+                        "and would have loved to add; but other projects await and LogiStruct, "
+                        "as a first programming project, has both served its purpose, and reached "
+                        "the limits of its initial design.\n\nThank you for taking the time to try out "
+                        "this little logic sim of mine. And see you on the next one ;).\n\n- Alea"
+                    );
                 }
 
                 al_flip_display();
