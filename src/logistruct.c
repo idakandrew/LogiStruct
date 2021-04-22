@@ -90,7 +90,7 @@ int main(void) {
                 al_draw_bitmap(bg, 0, 0, 0);
                 al_draw_filled_rectangle(590, 0, 1330, 1080, nearblack);
                 al_draw_bitmap(logo, 960 - al_get_bitmap_width(logo) / 2, 150, 0);
-                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v0.4 (Mar 13, 2021)");
+                al_draw_text(font, white, 960, 960, ALLEGRO_ALIGN_CENTER, "v1.0 (Apr 22, 2021)");
                 al_draw_text(font, white, 960, 1000, ALLEGRO_ALIGN_CENTER, "By Andrew Idak");
                 
                 for(int i = 0; i < len(mbtnlist); i++) {
@@ -224,7 +224,7 @@ int main(void) {
                         "and would have loved to add; but other projects await and LogiStruct, "
                         "as a first programming project, has both served its purpose, and reached "
                         "the limits of its initial design.\n\nThank you for taking the time to try out "
-                        "this little logic sim of mine. And see you on the next one ;).\n\n- Alea"
+                        "this little logic sim of mine. And see you on the next one ;).\n\n- Andrew"
                     );
                 }
 
