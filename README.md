@@ -36,7 +36,7 @@ libwinpthread-1.dll
 ## TODO
 - All clear ;)
 ## Screenshots
-![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.png?raw=true)
+![menu](https://github.com/idakandrew/logistruct/blob/main/media/mainmenu.pngraw=true)
 
 ![decoder](https://github.com/idakandrew/logistruct/blob/main/media/decoder.png?raw=true)
 
