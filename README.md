@@ -38,6 +38,8 @@ libwinpthread-1.dll
 ## Screenshots
 ![menu](https://github.com/idakandrew/logistruct/blob/main/media/menu.png?raw=true)
 
+![calc](https://github.com/idakandrew/logistruct/blob/main/media/calc.png?raw=true)
+
 ![decoder](https://github.com/idakandrew/logistruct/blob/main/media/decoder.png?raw=true)
 
 ![adder](https://github.com/idakandrew/logistruct/blob/main/media/adder.png?raw=true)
