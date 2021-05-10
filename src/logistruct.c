@@ -329,10 +329,10 @@ int main(void) {
                     break;
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     if(event.mouse.z > prevz) {
-                        zm = r_lim(1, zm / 2, 4);
+                        zm = r_lim(1, zm / 2, 8);
                         fact = 20 / zm;
                     } else if(event.mouse.z < prevz) {
-                        zm = r_lim(1, zm * 2, 4);
+                        zm = r_lim(1, zm * 2, 8);
                         fact = 20 / zm;
                     }
                     if(pan && click || event.mouse.z != prevz) {

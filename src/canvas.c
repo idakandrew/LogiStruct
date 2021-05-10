@@ -22,6 +22,8 @@ int zm_adj(int mode, int zm) {
             return mode ? 25 : 48;
         case 4:
             return mode ? 75 : 144;
+        case 8:
+            return mode ? 225 : 432;
         default:
             return 0;
     }
@@ -40,7 +42,7 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
     int adj = 20 / zm;
 
     for(int i = cx - vxzm; i < cx + VIEW_X + vxzm; i++) {
-        if(grid) {
+        if(grid && zm < 8) {
             al_draw_line((i-cx + vxzm)*20/zm, 0, (i-cx + vxzm)*20/zm, 1000, nearblack, 1);
         }
 
@@ -51,7 +53,7 @@ void draw_map(int zm, bool grid, int map[MAP_X][MAP_Y], int cx, int cy, ALLEGRO_
 
             if(map[i][j] != empty) {
                 al_draw_filled_rectangle((i-cx + vxzm)*adj, (j-cy + vyzm)*adj, (i-cx + vxzm)*adj+adj, (j-cy + vyzm)*adj+adj, colormap[map[i][j]]);
-                if(map[i][j] == nand || map[i][j] == nor) {
+                if((map[i][j] == nand || map[i][j] == nor) && zm < 8) {
                     xs[saved] = i, ys[saved] = j, saved++;
                 }
             }
